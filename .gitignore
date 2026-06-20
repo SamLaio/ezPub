@@ -1,0 +1,15 @@
+bin/
+release/
+relese/
+release-notes/
+setting/
+TODO.md
+*.exe
+*.epub
+!test_file/
+!test_file/*.epub
+*.out.txt
+CHAT_CONTEXT.md
+CHAT_EXPORT_*.md
+.history/
+log/
