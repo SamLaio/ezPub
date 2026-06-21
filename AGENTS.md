@@ -126,8 +126,14 @@
 go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.1.0-windows-amd64.exe .\cmd\ezpub
 ```
 
-10. 發布時，把 `release/` 資料夾下該版本 exe 與 `release/tools/pyftsubset.exe` 當成附檔或同包檔案。
-11. 發布內容使用該版本 release 說明檔。
+10. 發布前，將該版本 exe 與整個 `release/tools/` 資料夾壓縮成 zip，例如 `release/ezpub-0.1.0-windows-amd64.zip`：
+
+```powershell
+Compress-Archive -Force -Path .\release\ezpub-0.1.0-windows-amd64.exe, .\release\tools -DestinationPath .\release\ezpub-0.1.0-windows-amd64.zip
+```
+
+11. 發布時，只上傳該版本 zip 作為 release 附件；不要再把 exe 與 `pyftsubset.exe` 分開上傳。
+12. 發布內容使用該版本 release 說明檔。
 
 ## Build 輸出慣例
 
@@ -139,6 +145,7 @@ go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.1.0-windows-amd64.exe .\c
 - 不得在專案根目錄、`cmd/`、`bin/` 或其它資料夾留下任何產出的 `.exe`。
 - 所有 exe 檔名都必須包含版本號。
 - `pyftsubset.exe` 一律輸出到 `release/tools/pyftsubset.exe`。
+- Release 附件一律打包成 `release/ezpub-<版本號>-windows-amd64.zip`，zip 內包含該版本 exe 與 `tools/` 資料夾。
 - GUI 一律顯示「內嵌字體」與字型選擇按鈕；只有在偵測到 `pyftsubset.exe` 時才顯示「僅嵌入子集」。
 - 使用者可外部編輯或由 GUI 保存的設定集中放在 `setting/`；檔案可在第一次使用後才建立，也可以是空檔。
 - 目前 `setting/` 檔案包含：`tagList.txt`（類別下拉，一行一個）、`custom.css`（自動保存定制 CSS）、`editor.txt`（TXT 編輯器路徑）。
@@ -146,12 +153,14 @@ go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.1.0-windows-amd64.exe .\c
 
 ```text
 release/ezpub-<版本號>-windows-amd64.exe
+release/ezpub-<版本號>-windows-amd64.zip
 ```
 
 範例：
 
 ```powershell
 go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.1.0-windows-amd64.exe .\cmd\ezpub
+Compress-Archive -Force -Path .\release\ezpub-0.1.0-windows-amd64.exe, .\release\tools -DestinationPath .\release\ezpub-0.1.0-windows-amd64.zip
 ```
 
 ## Git Ignore 規則
