@@ -91,6 +91,46 @@ func TestAdjustChapterLevelBounds(t *testing.T) {
 	}
 }
 
+func TestValidChapterSelectionUsesMultiSelection(t *testing.T) {
+	got := validChapterSelection([]int{3, 1, 3, -1, 9}, 2, 5)
+	want := []int{1, 3}
+	if len(got) != len(want) || got[0] != want[0] || got[1] != want[1] {
+		t.Fatalf("selection = %v, want %v", got, want)
+	}
+
+	got = validChapterSelection(nil, 2, 5)
+	if len(got) != 1 || got[0] != 2 {
+		t.Fatalf("fallback selection = %v, want [2]", got)
+	}
+
+	got = validChapterSelection(nil, 9, 5)
+	if len(got) != 0 {
+		t.Fatalf("invalid fallback selection = %v, want []", got)
+	}
+}
+
+func TestAdjustChapterLevelsAppliesToSelection(t *testing.T) {
+	model := &chapterEditorModel{rows: []chapterEditorRow{
+		{Index: 1, Title: "第一節", Line: 9, Level: 1},
+		{Index: 2, Title: "第二節", Line: 28, Level: 2},
+		{Index: 3, Title: "第三節", Line: 39, Level: 6},
+	}}
+
+	if got := adjustChapterLevels(model, []int{0, 2}, 1); got != 1 {
+		t.Fatalf("changed = %d, want 1", got)
+	}
+	if model.rows[0].Level != 2 || model.rows[1].Level != 2 || model.rows[2].Level != 6 {
+		t.Fatalf("levels after tab = [%d %d %d], want [2 2 6]", model.rows[0].Level, model.rows[1].Level, model.rows[2].Level)
+	}
+
+	if got := adjustChapterLevels(model, []int{0, 1}, -1); got != 2 {
+		t.Fatalf("changed = %d, want 2", got)
+	}
+	if model.rows[0].Level != 1 || model.rows[1].Level != 1 || model.rows[2].Level != 6 {
+		t.Fatalf("levels after shift-tab = [%d %d %d], want [1 1 6]", model.rows[0].Level, model.rows[1].Level, model.rows[2].Level)
+	}
+}
+
 func TestAddChapterBySourceLineRestoresExistingLine(t *testing.T) {
 	model := &chapterEditorModel{rows: []chapterEditorRow{
 		{Index: 1, Title: "第一節", Line: 9, Level: 1, Deleted: true},

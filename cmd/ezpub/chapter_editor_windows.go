@@ -114,30 +114,36 @@ func showChapterEditor(owner walk.Form, title, status, outPath string, marks []b
 	var dlg *walk.Dialog
 	var tv *walk.TableView
 	var maxLineNE, addLineNE *walk.NumberEdit
-	toggleCurrent := func() {
+	selectedRows := func() []int {
 		if tv == nil {
-			return
+			return nil
 		}
-		idx := tv.CurrentIndex()
-		if idx < 0 || idx >= len(model.rows) {
-			return
-		}
-		model.rows[idx].Deleted = !model.rows[idx].Deleted
-		model.PublishRowChanged(idx)
-		debugLog("chapter editor toggle delete row=%d deleted=%v", idx, model.rows[idx].Deleted)
+		return validChapterSelection(tv.SelectedIndexes(), tv.CurrentIndex(), len(model.rows))
 	}
-	removeCurrent := func() {
-		if tv == nil {
+	toggleSelected := func() {
+		rows := selectedRows()
+		if len(rows) == 0 {
 			return
 		}
-		idx := tv.CurrentIndex()
-		if idx < 0 || idx >= len(model.rows) {
+		for _, idx := range rows {
+			model.rows[idx].Deleted = !model.rows[idx].Deleted
+			model.PublishRowChanged(idx)
+			debugLog("chapter editor toggle delete row=%d deleted=%v", idx, model.rows[idx].Deleted)
+		}
+	}
+	removeSelected := func() {
+		rows := selectedRows()
+		if len(rows) == 0 {
 			return
 		}
-		debugLog("chapter editor remove row=%d", idx)
-		model.rows = append(model.rows[:idx], model.rows[idx+1:]...)
+		for i := len(rows) - 1; i >= 0; i-- {
+			idx := rows[i]
+			debugLog("chapter editor remove row=%d", idx)
+			model.rows = append(model.rows[:idx], model.rows[idx+1:]...)
+		}
 		model.renumber()
-		if idx >= len(model.rows) {
+		idx := rows[0]
+		if idx > len(model.rows)-1 {
 			idx = len(model.rows) - 1
 		}
 		if idx >= 0 {
@@ -145,15 +151,13 @@ func showChapterEditor(owner walk.Form, title, status, outPath string, marks []b
 		}
 	}
 	adjustLevel := func(delta int) {
-		if tv == nil {
+		rows := selectedRows()
+		if len(rows) == 0 {
 			return
 		}
-		idx := tv.CurrentIndex()
-		if !adjustChapterLevel(model, idx, delta) {
-			return
-		}
+		changed := adjustChapterLevels(model, rows, delta)
 		_ = tv.SetFocus()
-		debugLog("chapter editor adjust level row=%d level=%d", idx, model.rows[idx].Level)
+		debugLog("chapter editor adjust level selected=%d changed=%d", len(rows), changed)
 	}
 	addChapter := func() {
 		line := numberEditInt(addLineNE, 1)
@@ -233,25 +237,26 @@ func showChapterEditor(owner walk.Form, title, status, outPath string, marks []b
 					Label{AssignTo: &newLineLabel, Text: "新章節，行號："},
 					NumberEdit{AssignTo: &addLineNE, Decimals: 0, Increment: 1, SpinButtonsVisible: true},
 					PushButton{AssignTo: &addBtn, Text: "點擊添加", OnClicked: addChapter},
-					Label{AssignTo: &helpLabel, Text: "Tab/Shift Tab 調整層級；Enter: 刪除/恢復選中目錄；Delete/Shift+Delete：刪除/徹底刪除選中目錄"},
+					Label{AssignTo: &helpLabel, Text: "Tab/Shift Tab 調整層級；Enter: 刪除/恢復選中的目錄；Delete/Shift+Delete：刪除/徹底刪除選中的目錄"},
 					Label{AssignTo: &listLabel, Text: "章節列表"},
 					TableView{
 						AssignTo:                 &tv,
 						Model:                    model,
 						AlternatingRowBG:         true,
 						ColumnsOrderable:         false,
+						MultiSelection:           true,
 						NotSortableByHeaderClick: true,
 						LastColumnStretched:      false,
 						OnItemActivated:          editCurrent,
 						OnKeyDown: func(key walk.Key) {
 							switch key {
 							case walk.KeyReturn:
-								toggleCurrent()
+								toggleSelected()
 							case walk.KeyDelete:
 								if walk.ShiftDown() {
-									removeCurrent()
+									removeSelected()
 								} else {
-									toggleCurrent()
+									toggleSelected()
 								}
 							case walk.KeyTab:
 								if walk.ShiftDown() {
@@ -402,6 +407,36 @@ func adjustChapterLevel(model *chapterEditorModel, row, delta int) bool {
 	model.rows[row].Level = level
 	model.PublishRowChanged(row)
 	return true
+}
+
+func adjustChapterLevels(model *chapterEditorModel, rows []int, delta int) int {
+	changed := 0
+	for _, row := range rows {
+		if adjustChapterLevel(model, row, delta) {
+			changed++
+		}
+	}
+	return changed
+}
+
+func validChapterSelection(selected []int, current, rowCount int) []int {
+	seen := make(map[int]bool, len(selected)+1)
+	rows := make([]int, 0, len(selected)+1)
+	add := func(idx int) {
+		if idx < 0 || idx >= rowCount || seen[idx] {
+			return
+		}
+		seen[idx] = true
+		rows = append(rows, idx)
+	}
+	for _, idx := range selected {
+		add(idx)
+	}
+	if len(rows) == 0 {
+		add(current)
+	}
+	sort.Ints(rows)
+	return rows
 }
 
 func maxInt(a, b int) int {
