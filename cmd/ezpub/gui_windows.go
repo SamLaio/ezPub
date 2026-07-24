@@ -965,9 +965,6 @@ func showGUI(state *guiState) error {
 		return err
 	}
 	if guiPrefsOK {
-		if subject := guiSettingsSubjectText(guiPrefs); subject != "" && subjectCB != nil {
-			_ = subjectCB.SetText(subject)
-		}
 		if strings.TrimSpace(guiPrefs.Language) != "" && languageCB != nil {
 			_ = languageCB.SetText(strings.TrimSpace(guiPrefs.Language))
 		}
@@ -1164,7 +1161,7 @@ func coverTab(coverLE **walk.LineEdit, coverPreview **walk.ImageView, forceTextC
 			}
 		}},
 		PushButton{AssignTo: &browseBtn, Text: "...", OnClicked: browseCover},
-		CheckBox{AssignTo: forceTextCoverCB, Text: "文字封面", Checked: cfg.Recent.ForceTextCoverBool()},
+		CheckBox{AssignTo: forceTextCoverCB, Text: "文字封面", Checked: defaultForceTextCoverChecked("", cfg)},
 		fixedLabel{AssignTo: &styleL, Text: "封面樣式"},
 		ComboBox{AssignTo: coverStyleCB, Model: []string{"—", "寬度適合", "高度適合"}, CurrentIndex: intValue(cfg.Recent.CoverStyle, intValue(cfg.Advanced.CoverStyle, 0))},
 		fixedLabel{AssignTo: &titleFontL, Text: "書名字體"},
@@ -1328,6 +1325,16 @@ func metadataTab(translatorLE, isbnLE, publisherLE **walk.LineEdit, dateDE **wal
 		setWidgetBounds(*descriptionTE, 95, 96, 705, 132)
 		setWidgetBounds(*rightsLE, -1000, -1000, 10, 10)
 	})
+}
+
+func defaultForceTextCoverChecked(coverPath string, cfg *config.Config) bool {
+	if strings.TrimSpace(coverPath) == "" {
+		return true
+	}
+	if cfg == nil {
+		return true
+	}
+	return cfg.Recent.ForceTextCoverBool()
 }
 
 func loadTagList() []string {

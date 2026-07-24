@@ -5,6 +5,8 @@ package main
 import (
 	"reflect"
 	"testing"
+
+	"ezpub/internal/config"
 )
 
 func TestNormalizeTagEntriesSplitsCommaAndTrims(t *testing.T) {
@@ -60,5 +62,16 @@ func TestGUISettingsSubjectTextUsesTags(t *testing.T) {
 	settings := guiSettings{Subject: "legacy1, legacy2", SubjectTags: []string{" t1, t2 ", "t3"}}
 	if got, want := guiSettingsSubjectText(settings), "t1, t2, t3"; got != want {
 		t.Fatalf("subject text = %q, want %q", got, want)
+	}
+}
+
+func TestDefaultForceTextCoverCheckedWhenCoverEmpty(t *testing.T) {
+	cfg := config.Default()
+	cfg.Recent.ForceTextCover = "0"
+	if !defaultForceTextCoverChecked("", cfg) {
+		t.Fatal("empty cover path should default to text cover")
+	}
+	if defaultForceTextCoverChecked("cover.jpg", cfg) {
+		t.Fatal("non-empty cover path should keep stored force text cover setting")
 	}
 }

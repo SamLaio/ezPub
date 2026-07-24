@@ -151,7 +151,7 @@ func Write(path string, bk *book.Book) error {
 	if err := addText(zw, "EPUB/text/book-toc.xhtml", bookTOCXHTML(bk)); err != nil {
 		return err
 	}
-	if err := addText(zw, "EPUB/toc.ncx", tocNCX(bk, id)); err != nil {
+	if err := addText(zw, "EPUB/toc.ncx", tocNCX(bk, resolvedBookID(bk, id))); err != nil {
 		return err
 	}
 	if err := addText(zw, "EPUB/content.opf", contentOPF(bk, id, now, resources, docs)); err != nil {
@@ -172,10 +172,7 @@ func containerXML() string {
 }
 
 func contentOPF(bk *book.Book, id, modified string, resources []resource, docs []contentDoc) string {
-	bookID := id
-	if strings.TrimSpace(bk.Identifier) != "" {
-		bookID = bk.Identifier
-	}
+	bookID := resolvedBookID(bk, id)
 	var b strings.Builder
 	b.WriteString(`<?xml version="1.0" encoding="UTF-8"?>` + "\n")
 	b.WriteString(`<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="bookid" prefix="rendition: http://www.idpf.org/vocab/rendition/#">` + "\n")
@@ -244,6 +241,13 @@ func contentOPF(bk *book.Book, id, modified string, resources []resource, docs [
 	}
 	b.WriteString("</package>\n")
 	return b.String()
+}
+
+func resolvedBookID(bk *book.Book, fallback string) string {
+	if bk != nil && strings.TrimSpace(bk.Identifier) != "" {
+		return strings.TrimSpace(bk.Identifier)
+	}
+	return fallback
 }
 
 func chapterDocs(bk *book.Book) []contentDoc {
@@ -325,9 +329,11 @@ func bookTOCXHTML(bk *book.Book) string {
 		}
 		if target == "" {
 			b.WriteString(fmt.Sprintf("<dt class=\"%s\"><span>%s</span></dt>\n", class, escape(ch.Title)))
+			b.WriteString("<dd></dd>\n")
 			continue
 		}
 		b.WriteString(fmt.Sprintf("<dt class=\"%s\"><a href=\"%s.xhtml\">%s</a></dt>\n", class, escape(target), escape(ch.Title)))
+		b.WriteString("<dd></dd>\n")
 	}
 	b.WriteString("</dl>\n</div>\n</body>\n</html>\n")
 	return b.String()

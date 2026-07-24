@@ -68,6 +68,7 @@ func TestWriteAndExtractText(t *testing.T) {
 		`<h2 class="titletoc">目錄</h2>`,
 		`<div class="toc">`,
 		`<dt class="tocl2"><a href="chapter0001.xhtml">第一章 開始</a></dt>`,
+		`<dd></dd>`,
 	} {
 		if !strings.Contains(booktoc, want) {
 			t.Fatalf("book-toc.xhtml missing %q:\n%s", want, booktoc)
@@ -80,6 +81,31 @@ func TestWriteAndExtractText(t *testing.T) {
 	}
 	if text == "" {
 		t.Fatal("extracted text is empty")
+	}
+}
+
+func TestWriteNCXUIDMatchesExplicitIdentifier(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "book.epub")
+	bk, err := book.FromText("第一章 開始\n內容", book.TextOptions{
+		Title:        "測試書",
+		Identifier:   "urn:uuid:593774c3-91c0-4dad-9071-35d0456655af",
+		ChapterRegex: `^第一章.*`,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := Write(path, bk); err != nil {
+		t.Fatal(err)
+	}
+	opf := readZipEntry(t, path, "EPUB/content.opf")
+	ncx := readZipEntry(t, path, "EPUB/toc.ncx")
+	want := `urn:uuid:593774c3-91c0-4dad-9071-35d0456655af`
+	if !strings.Contains(opf, `<dc:identifier id="bookid">`+want+`</dc:identifier>`) {
+		t.Fatalf("content.opf should use explicit identifier:\n%s", opf)
+	}
+	if !strings.Contains(ncx, `<meta name="dtb:uid" content="`+want+`"/>`) {
+		t.Fatalf("toc.ncx should use the OPF book identifier:\n%s", ncx)
 	}
 }
 
