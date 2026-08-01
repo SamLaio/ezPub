@@ -84,6 +84,58 @@ func TestWriteAndExtractText(t *testing.T) {
 	}
 }
 
+func TestExtractTextUsesOPFSpineForHTMLFiles(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "spine-html.epub")
+	file, err := os.Create(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	zw := zip.NewWriter(file)
+	for name, data := range map[string]string{
+		"META-INF/container.xml": `<?xml version="1.0" encoding="utf-8"?>
+<container xmlns="urn:oasis:names:tc:opendocument:xmlns:container" version="1.0">
+  <rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles>
+</container>`,
+		"OEBPS/content.opf": `<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0">
+  <manifest>
+    <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>
+    <item id="second" href="Text/chapter_2.html" media-type="application/xhtml+xml"/>
+    <item id="first" href="Text/chapter_1.html" media-type="application/xhtml+xml"/>
+  </manifest>
+  <spine><itemref idref="second"/><itemref idref="first"/></spine>
+</package>`,
+		"OEBPS/nav.xhtml": `<html xmlns="http://www.w3.org/1999/xhtml"><body><nav><ol><li>目錄</li></ol></nav></body></html>`,
+		"OEBPS/Text/chapter_1.html": `<html xmlns="http://www.w3.org/1999/xhtml"><body><p>第一個檔名</p></body></html>`,
+		"OEBPS/Text/chapter_2.html": `<html xmlns="http://www.w3.org/1999/xhtml"><body><p>第二個檔名但 spine 第一</p></body></html>`,
+	} {
+		if err := addText(zw, name, data); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := zw.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if err := file.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	text, err := ExtractText(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(text, "第二個檔名但 spine 第一") || !strings.Contains(text, "第一個檔名") {
+		t.Fatalf("missing extracted body text:\n%s", text)
+	}
+	if strings.Index(text, "第二個檔名但 spine 第一") > strings.Index(text, "第一個檔名") {
+		t.Fatalf("extract order should follow spine, not filename:\n%s", text)
+	}
+	if strings.Contains(text, "目錄") {
+		t.Fatalf("nav text should not be extracted:\n%s", text)
+	}
+}
+
 func TestWriteNCXUIDMatchesExplicitIdentifier(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "book.epub")

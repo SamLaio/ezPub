@@ -1,4 +1,4 @@
-# ezPub 0.1
+# ezPub 0.2.0
 
 ezPub 是 EasyPub 工作流的 Go 重製版，目標是把已無源碼、無維護的舊工具改成可讀、可測、可持續維護的專案。
 
@@ -34,31 +34,31 @@ ezPub 是 EasyPub 工作流的 Go 重製版，目標是把已無源碼、無維�
 ## 建置
 
 ```powershell
-go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.1.2-windows-amd64.exe .\cmd\ezpub
+go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.2.0-windows-amd64.exe .\cmd\ezpub
 ```
 
 若要產生雙擊時不顯示命令列視窗的 GUI exe：
 
 ```powershell
-go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.1.2-windows-amd64.exe .\cmd\ezpub
+go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.2.0-windows-amd64.exe .\cmd\ezpub
 ```
 
 查看版本：
 
 ```powershell
-.\release\ezpub-0.1.2-windows-amd64.exe version
+.\release\ezpub-0.2.0-windows-amd64.exe version
 ```
 
 開啟 GUI：
 
 ```powershell
-.\release\ezpub-0.1.2-windows-amd64.exe
+.\release\ezpub-0.2.0-windows-amd64.exe
 ```
 
 也可以直接帶入 TXT：
 
 ```powershell
-.\release\ezpub-0.1.2-windows-amd64.exe gui ".\test_file\巴黎茶花女遺事 - 小仲馬.txt"
+.\release\ezpub-0.2.0-windows-amd64.exe gui ".\test_file\巴黎茶花女遺事 - 小仲馬.txt"
 ```
 
 GUI 依 EasyPub 的主要分頁工作流設計，包含章節、版式、字體、書籍信息、定制 CSS、插圖與高級選項；ezPub 目前只製作 EPUB，因此不提供 MOBI、AZW3、KindleGen、ASIN、壓縮方式或預設後綴等非 EPUB 欄位。
@@ -66,13 +66,13 @@ GUI 依 EasyPub 的主要分頁工作流設計，包含章節、版式、字體�
 ## TXT 轉 EPUB
 
 ```powershell
-.\release\ezpub-0.1.2-windows-amd64.exe build .\examples\sample.txt -o .\examples\sample.epub
+.\release\ezpub-0.2.0-windows-amd64.exe build .\examples\sample.txt -o .\examples\sample.epub
 ```
 
 使用舊 EasyPub 設定檔：
 
 ```powershell
-.\release\ezpub-0.1.2-windows-amd64.exe build novel.txt -o novel.epub -config C:\PortableApps\easypub\config.xml
+.\release\ezpub-0.2.0-windows-amd64.exe build novel.txt -o novel.epub -config C:\PortableApps\easypub\config.xml
 ```
 
 若未指定 `-title` / `-author`，且檔名符合 `書名 - 作者.txt`，ezPub 會自動拆出書名與作者。
@@ -111,7 +111,7 @@ GUI 依 EasyPub 的主要分頁工作流設計，包含章節、版式、字體�
 先匯出章節表：
 
 ```powershell
-.\release\ezpub-0.1.2-windows-amd64.exe chapters novel.txt -o novel.chapters.tsv
+.\release\ezpub-0.2.0-windows-amd64.exe chapters novel.txt -o novel.chapters.tsv
 ```
 
 TSV 欄位為：
@@ -123,7 +123,7 @@ start_line	level	title	skip_heading
 改完後套用：
 
 ```powershell
-.\release\ezpub-0.1.2-windows-amd64.exe build novel.txt -o novel.epub -chapters novel.chapters.tsv
+.\release\ezpub-0.2.0-windows-amd64.exe build novel.txt -o novel.epub -chapters novel.chapters.tsv
 ```
 
 `skip_heading` 設為 `1` 時，該行只當章節標題，不放進正文；序章或手動切出的純內容段落可設為 `0`。
@@ -131,13 +131,13 @@ start_line	level	title	skip_heading
 固定長度拆章：
 
 ```powershell
-.\release\ezpub-0.1.2-windows-amd64.exe build novel.txt -o novel.epub -split-length 12000
+.\release\ezpub-0.2.0-windows-amd64.exe build novel.txt -o novel.epub -split-length 12000
 ```
 
 相容 EasyPub 的「按長度均分 x 章」：
 
 ```powershell
-.\release\ezpub-0.1.2-windows-amd64.exe build novel.txt -o novel.epub -split-count 10
+.\release\ezpub-0.2.0-windows-amd64.exe build novel.txt -o novel.epub -split-count 10
 ```
 
 如果 `config.xml` 中 `RecentOptions.splitmode` 是 `2`，ezPub 會讀取 `RecentOptions.splitcount` 作為均分章數。
@@ -149,7 +149,7 @@ start_line	level	title	skip_heading
 建立可編輯的插圖清單：
 
 ```powershell
-.\release\ezpub-0.1.2-windows-amd64.exe images .\illustrations -o images.tsv
+.\release\ezpub-0.2.0-windows-amd64.exe images .\illustrations -o images.tsv
 ```
 
 清單中的圖片檔名不可重複，因為 EPUB 內會歸位到同一個 `images/` 資料夾。刪除 TSV 中某一行就等同於從本次 EPUB 插圖清單移除該圖，不會刪除來源檔。
@@ -157,7 +157,7 @@ start_line	level	title	skip_heading
 產生並複製可貼入 TXT 的 raw HTML 引用：
 
 ```powershell
-.\release\ezpub-0.1.2-windows-amd64.exe images .\illustrations -copy-ref 001.jpg
+.\release\ezpub-0.2.0-windows-amd64.exe images .\illustrations -copy-ref 001.jpg
 ```
 
 引用格式會和 EasyPub 一致：
@@ -169,13 +169,13 @@ start_line	level	title	skip_heading
 用系統預設圖片查看程式開啟圖片：
 
 ```powershell
-.\release\ezpub-0.1.2-windows-amd64.exe images .\illustrations -open 001.jpg
+.\release\ezpub-0.2.0-windows-amd64.exe images .\illustrations -open 001.jpg
 ```
 
 建書時套用插圖清單：
 
 ```powershell
-.\release\ezpub-0.1.2-windows-amd64.exe build novel.txt -o novel.epub -image-list images.tsv
+.\release\ezpub-0.2.0-windows-amd64.exe build novel.txt -o novel.epub -image-list images.tsv
 ```
 
 若文字中使用 raw HTML 標記：
@@ -187,13 +187,13 @@ start_line	level	title	skip_heading
 可以掃描插圖目錄，ezPub 會依檔名或相對路徑把引用修正成 EPUB 內部路徑並加入資源：
 
 ```powershell
-.\release\ezpub-0.1.2-windows-amd64.exe build novel.txt -o novel.epub -scan-images .\illustrations
+.\release\ezpub-0.2.0-windows-amd64.exe build novel.txt -o novel.epub -scan-images .\illustrations
 ```
 
 release 版會在 `tools/pyftsubset.exe` 隨附 fontTools 的 `pyftsubset`。找到這個工具時，可在輸出前子集化內嵌字型：
 
 ```powershell
-.\release\ezpub-0.1.2-windows-amd64.exe build novel.txt -o novel.epub -font .\font.ttf -subset-fonts
+.\release\ezpub-0.2.0-windows-amd64.exe build novel.txt -o novel.epub -font .\font.ttf -subset-fonts
 ```
 
 ezPub 會依序尋找 exe 同目錄的 `tools/pyftsubset.exe`、`pyftsubset.exe`，最後才找 PATH。CLI 仍可手動指定：
@@ -215,13 +215,15 @@ GUI 一律顯示「內嵌字體」與字型選擇按鈕；只有在偵測到 `py
 ## EPUB 轉 TXT
 
 ```powershell
-.\release\ezpub-0.1.2-windows-amd64.exe txt novel.epub -o novel.txt
+.\release\ezpub-0.2.0-windows-amd64.exe txt novel.epub -o novel.txt
 ```
+
+EPUB 轉 TXT 會優先依 `META-INF/container.xml` 找到 OPF，並按 OPF `spine` 閱讀順序抽出 `.xhtml`、`.html`、`.htm` 正文檔；若 EPUB 缺少可解析的 spine，才退回掃描一般 HTML/XHTML 文字檔。
 
 ## 檢查 EasyPub 設定
 
 ```powershell
-.\release\ezpub-0.1.2-windows-amd64.exe inspect-config C:\PortableApps\easypub\config.xml
+.\release\ezpub-0.2.0-windows-amd64.exe inspect-config C:\PortableApps\easypub\config.xml
 ```
 
 會顯示目前讀到的章節正則、空行處理、raw HTML 標記與 EPUB 相關設定。
