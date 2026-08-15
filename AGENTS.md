@@ -4,7 +4,7 @@
 
 ## 版本
 
-- 目前版本：`0.2.0`
+- 目前版本：`0.3.0`
 - 版本號來源：`internal/lang/lang.go`
 - README 標題與內容要和目前版本一致。
 
@@ -112,7 +112,7 @@
 1. 執行 `go test ./...`。
 2. 確認已完成 Commit 前檢查。
 3. 再次檢查目前程式功能是否和 `README.md` 一致；若不一致，先修改 `README.md`。
-4. 產生一份 release 說明草稿，檔名以版本號分界，例如 `release-notes/0.2.0.md`。
+4. 產生一份 release 說明草稿，檔名以版本號分界，例如 `release-notes/0.3.0.md`。
 5. release 說明草稿不進版本庫，已列入 `.gitignore`。
 6. 不提交 `.exe`，`.exe` 只在 release 時產生。
 
@@ -122,22 +122,22 @@
 
 1. 確認版本號已更新。
 2. 執行 `go test ./...`。
-3. 檢查是否已有該版本 release 說明檔，例如 `release-notes/0.2.0.md`。
+3. 檢查是否已有該版本 release 說明檔，例如 `release-notes/0.3.0.md`。
 4. 如果沒有 release 說明檔，先產生一份。
-5. 確認 `release/` 資料夾下已有該版本的 exe，例如 `release/ezpub-0.2.0-windows-amd64.exe`。
+5. 確認 `release/` 資料夾下已有該版本的 exe，例如 `release/ezpub-0.3.0-windows-amd64.exe`。
 6. exe 一律輸出到 `release/`。
-7. exe 檔名一律包含版本號與平台，例如 `ezpub-0.2.0-windows-amd64.exe`。
+7. exe 檔名一律包含版本號與平台，例如 `ezpub-0.3.0-windows-amd64.exe`。
 8. 若要支援 GUI 的「僅嵌入子集」，確認 `release/tools/pyftsubset.exe` 存在。
 9. 如果 release 資料夾下沒有該版本 exe，先建置：
 
 ```powershell
-go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.2.0-windows-amd64.exe .\cmd\ezpub
+go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.3.0-windows-amd64.exe .\cmd\ezpub
 ```
 
-10. 發布前，將該版本 exe 與整個 `release/tools/` 資料夾壓縮成 zip，例如 `release/ezpub-0.2.0-windows-amd64.zip`：
+10. 發布前，將該版本 exe 與整個 `release/tools/` 資料夾壓縮成 zip，例如 `release/ezpub-0.3.0-windows-amd64.zip`：
 
 ```powershell
-Compress-Archive -Force -Path .\release\ezpub-0.2.0-windows-amd64.exe, .\release\tools -DestinationPath .\release\ezpub-0.2.0-windows-amd64.zip
+Compress-Archive -Force -Path .\release\ezpub-0.3.0-windows-amd64.exe, .\release\tools -DestinationPath .\release\ezpub-0.3.0-windows-amd64.zip
 ```
 
 11. 發布時，只上傳該版本 zip 作為 release 附件；不要再把 exe 與 `pyftsubset.exe` 分開上傳。
@@ -167,8 +167,8 @@ release/ezpub-<版本號>-windows-amd64.zip
 範例：
 
 ```powershell
-go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.2.0-windows-amd64.exe .\cmd\ezpub
-Compress-Archive -Force -Path .\release\ezpub-0.2.0-windows-amd64.exe, .\release\tools -DestinationPath .\release\ezpub-0.2.0-windows-amd64.zip
+go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.3.0-windows-amd64.exe .\cmd\ezpub
+Compress-Archive -Force -Path .\release\ezpub-0.3.0-windows-amd64.exe, .\release\tools -DestinationPath .\release\ezpub-0.3.0-windows-amd64.zip
 ```
 
 ## Git Ignore 規則

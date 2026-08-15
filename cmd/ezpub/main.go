@@ -72,6 +72,8 @@ func runBuild(args []string) error {
 		publisher         string
 		subjects          multiFlag
 		category          multiFlag
+		series            string
+		seriesIndex       float64
 		date              string
 		identifier        string
 		isbn              string
@@ -128,6 +130,8 @@ func runBuild(args []string) error {
 	fs.StringVar(&publisher, "publisher", "", "book publisher")
 	fs.Var(&subjects, "subject", "book subject; can be repeated")
 	fs.Var(&category, "category", "book category; can be repeated")
+	fs.StringVar(&series, "series", "", "book series")
+	fs.Float64Var(&seriesIndex, "series-index", 0, "book series index")
 	fs.StringVar(&date, "date", "", "book date")
 	fs.StringVar(&identifier, "identifier", "", "book identifier")
 	fs.StringVar(&isbn, "isbn", "", "book ISBN; alias for identifier")
@@ -140,7 +144,7 @@ func runBuild(args []string) error {
 	fs.Var(&images, "image", "image asset path; can be repeated")
 	fs.StringVar(&imageList, "image-list", "", "image TSV from the images command")
 	fs.Var(&scanImages, "scan-images", "scan image directory and rewrite raw HTML img src; can be repeated")
-	fs.StringVar(&encodingName, "encoding", "auto", "text encoding: auto, utf-8, gbk, gb18030, utf-16le, utf-16be")
+	fs.StringVar(&encodingName, "encoding", "auto", "text encoding: auto, utf-8, gbk, gb18030, big5, cp950, utf-16le, utf-16be")
 	fs.StringVar(&regex, "chapter-regex", "", "chapter title regular expression")
 	fs.StringVar(&chapterFile, "chapters", "", "manually edited chapter TSV")
 	fs.IntVar(&splitLength, "split-length", 0, "split chapters by roughly n characters")
@@ -352,6 +356,8 @@ func runBuild(args []string) error {
 		Description:         description,
 		Publisher:           publisher,
 		Subjects:            subjects,
+		Series:              series,
+		SeriesIndex:         seriesIndex,
 		Date:                date,
 		Identifier:          identifier,
 		Rights:              rights,
@@ -406,7 +412,7 @@ func runChapters(args []string) error {
 	fs.StringVar(&outPath, "o", "", "chapter TSV output path")
 	fs.StringVar(&configPath, "config", "", "EasyPub config.xml path")
 	fs.StringVar(&title, "title", "", "book title")
-	fs.StringVar(&encodingName, "encoding", "auto", "text encoding: auto, utf-8, gbk, gb18030, utf-16le, utf-16be")
+	fs.StringVar(&encodingName, "encoding", "auto", "text encoding: auto, utf-8, gbk, gb18030, big5, cp950, utf-16le, utf-16be")
 	fs.StringVar(&regex, "chapter-regex", "", "chapter title regular expression")
 	fs.IntVar(&splitLength, "split-length", 0, "split chapters by roughly n characters")
 	fs.IntVar(&splitCount, "split-count", 0, "split into n even chapters, matching EasyPub length split")

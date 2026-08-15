@@ -21,6 +21,8 @@ func TestWriteAndExtractText(t *testing.T) {
 		Description:     "簡介",
 		Publisher:       "出版社",
 		Subjects:        []string{"小說"},
+		Series:          "系列名",
+		SeriesIndex:     2,
 		Rights:          "版權",
 		Language:        "zh-TW",
 		ChapterRegex:    `^第一章.*`,
@@ -47,6 +49,10 @@ func TestWriteAndExtractText(t *testing.T) {
 		"<dc:publisher>出版社</dc:publisher>",
 		"<dc:contributor>譯者</dc:contributor>",
 		"<dc:subject>小說</dc:subject>",
+		`<meta property="belongs-to-collection" id="series">系列名</meta>`,
+		`<meta property="group-position" refines="#series">2</meta>`,
+		`<meta name="calibre:series" content="系列名"/>`,
+		`<meta name="calibre:series_index" content="2"/>`,
 		"<dc:description>簡介</dc:description>",
 		"<dc:rights>版權</dc:rights>",
 	} {
@@ -106,7 +112,7 @@ func TestExtractTextUsesOPFSpineForHTMLFiles(t *testing.T) {
   </manifest>
   <spine><itemref idref="second"/><itemref idref="first"/></spine>
 </package>`,
-		"OEBPS/nav.xhtml": `<html xmlns="http://www.w3.org/1999/xhtml"><body><nav><ol><li>目錄</li></ol></nav></body></html>`,
+		"OEBPS/nav.xhtml":           `<html xmlns="http://www.w3.org/1999/xhtml"><body><nav><ol><li>目錄</li></ol></nav></body></html>`,
 		"OEBPS/Text/chapter_1.html": `<html xmlns="http://www.w3.org/1999/xhtml"><body><p>第一個檔名</p></body></html>`,
 		"OEBPS/Text/chapter_2.html": `<html xmlns="http://www.w3.org/1999/xhtml"><body><p>第二個檔名但 spine 第一</p></body></html>`,
 	} {

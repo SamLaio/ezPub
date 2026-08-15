@@ -8,6 +8,7 @@ import (
 	"unicode/utf8"
 
 	"golang.org/x/text/encoding/simplifiedchinese"
+	"golang.org/x/text/encoding/traditionalchinese"
 	textunicode "golang.org/x/text/encoding/unicode"
 	"golang.org/x/text/transform"
 
@@ -64,6 +65,8 @@ func decodeAs(data []byte, name string) (string, error) {
 		return transformOnly(simplifiedchinese.GBK.NewDecoder(), data)
 	case "gb18030":
 		return transformOnly(simplifiedchinese.GB18030.NewDecoder(), data)
+	case "big5", "cp950", "big5hkscs":
+		return transformOnly(traditionalchinese.Big5.NewDecoder(), data)
 	case "utf-16le":
 		return transformOnly(textunicode.UTF16(textunicode.LittleEndian, textunicode.ExpectBOM).NewDecoder(), data)
 	case "utf-16be":

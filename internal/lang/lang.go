@@ -1,6 +1,6 @@
 package lang
 
-const Version = "0.2.0"
+const Version = "0.3.0"
 
 const (
 	AppName           = "ezpub"
@@ -14,7 +14,7 @@ const (
 
 const DefaultChapterRegex = `^\s*[第卷][0123456789一二三四五六七八九十零〇百千两兩]*[章回部节節集卷篇話话].*|^\s*Chapter\s*[0123456789]+.*`
 
-const Usage = `ezpub 0.2.0 - maintainable EasyPub-style ebook builder
+const Usage = `ezpub 0.3.0 - maintainable EasyPub-style ebook builder
 
 Usage:
   ezpub build input.txt -o output.epub [options]
@@ -41,12 +41,14 @@ Common options:
   -publisher text       book publisher
   -description text     book description
   -subject text         subject tag; repeat for more tags
+  -series text          book series
+  -series-index number  book series index
   -date text            publication date
   -identifier text      book identifier
   -rights text          rights statement
   -subset-fonts         subset embedded fonts with pyftsubset
   -chapter-regex expr   override chapter matching regex
-  -encoding name        auto, utf-8, gbk, gb18030, utf-16le, utf-16be
+  -encoding name        auto, utf-8, gbk, gb18030, big5, cp950, utf-16le, utf-16be
   -split-count n        split into n even chapters, matching EasyPub length split
   -vertical             append vertical writing CSS
 `

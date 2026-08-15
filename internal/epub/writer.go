@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -193,6 +194,16 @@ func contentOPF(bk *book.Book, id, modified string, resources []resource, docs [
 	}
 	for _, subject := range bk.Subjects {
 		b.WriteString(fmt.Sprintf("    <dc:subject>%s</dc:subject>\n", escape(subject)))
+	}
+	if bk.Series != "" {
+		b.WriteString(fmt.Sprintf("    <meta property=\"belongs-to-collection\" id=\"series\">%s</meta>\n", escape(bk.Series)))
+		b.WriteString("    <meta property=\"collection-type\" refines=\"#series\">series</meta>\n")
+		if bk.SeriesIndex > 0 {
+			seriesIndex := strconv.FormatFloat(bk.SeriesIndex, 'f', -1, 64)
+			b.WriteString(fmt.Sprintf("    <meta property=\"group-position\" refines=\"#series\">%s</meta>\n", escape(seriesIndex)))
+			b.WriteString(fmt.Sprintf("    <meta name=\"calibre:series_index\" content=\"%s\"/>\n", escape(seriesIndex)))
+		}
+		b.WriteString(fmt.Sprintf("    <meta name=\"calibre:series\" content=\"%s\"/>\n", escape(bk.Series)))
 	}
 	if bk.Date != "" {
 		b.WriteString(fmt.Sprintf("    <dc:date>%s</dc:date>\n", escape(bk.Date)))

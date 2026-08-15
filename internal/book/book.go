@@ -17,6 +17,8 @@ type Book struct {
 	Description string
 	Publisher   string
 	Subjects    []string
+	Series      string
+	SeriesIndex float64
 	Date        string
 	Identifier  string
 	Rights      string
@@ -76,6 +78,8 @@ type TextOptions struct {
 	Description         string
 	Publisher           string
 	Subjects            []string
+	Series              string
+	SeriesIndex         float64
 	Date                string
 	Identifier          string
 	Rights              string
@@ -183,6 +187,8 @@ func FromText(text string, opts TextOptions) (*Book, error) {
 		Description: opts.Description,
 		Publisher:   opts.Publisher,
 		Subjects:    cleanStrings(opts.Subjects),
+		Series:      opts.Series,
+		SeriesIndex: opts.SeriesIndex,
 		Date:        opts.Date,
 		Identifier:  opts.Identifier,
 		Rights:      opts.Rights,
