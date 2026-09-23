@@ -109,6 +109,7 @@ type TextOptions struct {
 }
 
 func FromText(text string, opts TextOptions) (*Book, error) {
+	text = sanitizeXMLText(text)
 	if opts.Title == "" {
 		opts.Title = lang.DefaultBookTitle
 	}
@@ -202,6 +203,15 @@ func FromText(text string, opts TextOptions) (*Book, error) {
 		FontSources: cleanStrings(opts.FontSources),
 		Images:      images,
 	}, nil
+}
+
+func sanitizeXMLText(text string) string {
+	return strings.Map(func(r rune) rune {
+		if r == '\t' || r == '\n' || r == '\r' || r >= 0x20 {
+			return r
+		}
+		return -1
+	}, text)
 }
 
 func nonEmptyChapters(chapters []Chapter) []Chapter {

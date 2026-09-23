@@ -4,7 +4,7 @@
 
 ## 版本
 
-- 目前版本：`0.3.0`
+- 目前版本：`0.3.1`
 - 版本號來源：`internal/lang/lang.go`
 - README 標題與內容要和目前版本一致。
 
@@ -131,13 +131,13 @@
 9. 如果 release 資料夾下沒有該版本 exe，先建置：
 
 ```powershell
-go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.3.0-windows-amd64.exe .\cmd\ezpub
+go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.3.1-windows-amd64.exe .\cmd\ezpub
 ```
 
 10. 發布前，將該版本 exe 與整個 `release/tools/` 資料夾壓縮成 zip，例如 `release/ezpub-0.3.0-windows-amd64.zip`：
 
 ```powershell
-Compress-Archive -Force -Path .\release\ezpub-0.3.0-windows-amd64.exe, .\release\tools -DestinationPath .\release\ezpub-0.3.0-windows-amd64.zip
+Compress-Archive -Force -Path .\release\ezpub-0.3.1-windows-amd64.exe, .\release\tools -DestinationPath .\release\ezpub-0.3.1-windows-amd64.zip
 ```
 
 11. 發布時，只上傳該版本 zip 作為 release 附件；不要再把 exe 與 `pyftsubset.exe` 分開上傳。
@@ -167,8 +167,8 @@ release/ezpub-<版本號>-windows-amd64.zip
 範例：
 
 ```powershell
-go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.3.0-windows-amd64.exe .\cmd\ezpub
-Compress-Archive -Force -Path .\release\ezpub-0.3.0-windows-amd64.exe, .\release\tools -DestinationPath .\release\ezpub-0.3.0-windows-amd64.zip
+go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.3.1-windows-amd64.exe .\cmd\ezpub
+Compress-Archive -Force -Path .\release\ezpub-0.3.1-windows-amd64.exe, .\release\tools -DestinationPath .\release\ezpub-0.3.1-windows-amd64.zip
 ```
 
 ## Git Ignore 規則

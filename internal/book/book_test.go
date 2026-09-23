@@ -41,6 +41,19 @@ func TestRawHTMLTag(t *testing.T) {
 	}
 }
 
+func TestFromTextDropsInvalidXMLControlChars(t *testing.T) {
+	bk, err := FromText("第一章\x00\x0f\n內容\x01", TextOptions{Title: "測試書", ChapterRegex: `^第一章.*`})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := bk.Chapters[0].Title; got != "第一章" {
+		t.Fatalf("chapter title = %q", got)
+	}
+	if got := bk.Chapters[0].Blocks[0].Text; got != "內容" {
+		t.Fatalf("chapter text = %q", got)
+	}
+}
+
 func TestAddFullWidthSpaces(t *testing.T) {
 	blocks := paragraphs("內容", TextOptions{AddSpace: true, AddSpaceCount: 2})
 	if len(blocks) != 1 || blocks[0].Text != "　　內容" {

@@ -13,3 +13,6 @@ CHAT_CONTEXT.md
 CHAT_EXPORT_*.md
 .history/
 log/
+
+# graft's local graph cache — regenerable, not committed (run `graft build`).
+/graft/
