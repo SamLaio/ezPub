@@ -34,6 +34,16 @@ func TestAppendTagText(t *testing.T) {
 	}
 }
 
+func TestGUISubjectBuildArgsSplitsManualInput(t *testing.T) {
+	tags, args := guiSubjectBuildArgs(" 小說，科幻; 反派, 小說 ")
+	if want := []string{"小說", "科幻", "反派"}; !reflect.DeepEqual(tags, want) {
+		t.Fatalf("tags = %#v, want %#v", tags, want)
+	}
+	if want := []string{"-subject", "小說", "-subject", "科幻", "-subject", "反派"}; !reflect.DeepEqual(args, want) {
+		t.Fatalf("args = %#v, want %#v", args, want)
+	}
+}
+
 func TestParseGUIDebugArgsDefaultsOff(t *testing.T) {
 	enabled, args := parseGUIDebugArgs([]string{"book.txt"})
 	if enabled {

@@ -600,11 +600,9 @@ func showGUI(state *guiState) error {
 		add("-cover-title-font", numberIntText(coverTitleFontNE, intValue(state.cfg.Recent.TitleFont, 50)))
 		add("-cover-author-font", numberIntText(coverAuthorFontNE, intValue(state.cfg.Recent.AuthorFont, 25)))
 		add("-screen-height", numberIntText(screenHeightNE, intValue(state.cfg.Advanced.ScreenHeight, 720)))
-		subjectTags := normalizeTagEntries([]string{subjectCB.Text()})
+		subjectTags, subjectArgs := guiSubjectBuildArgs(subjectCB.Text())
 		_ = subjectCB.SetText(strings.Join(subjectTags, ", "))
-		for _, subject := range subjectTags {
-			buildArgs = append(buildArgs, "-subject", subject)
-		}
+		buildArgs = append(buildArgs, subjectArgs...)
 		if forceTextCoverCB != nil {
 			addBool("-force-text-cover", forceTextCoverCB.Checked())
 		}
@@ -1410,7 +1408,8 @@ func installSubjectAppendBehavior(subjectCB *walk.ComboBox) {
 		merged := appendTagText(base, selected)
 		changing = true
 		_ = subjectCB.SetText(merged)
-		_ = subjectCB.SetCurrentIndex(-1)
+		// Walk 會在選取確認後再發送一次通知；此時不可提早清除索引，
+		// 否則確認事件可能覆寫剛合併的可編輯文字。
 		changing = false
 		previousText = base
 		currentText = merged
@@ -1452,6 +1451,15 @@ func normalizeTagEntries(entries []string) []string {
 		out = append(out, splitList(entry)...)
 	}
 	return prependUnique(nil, out...)
+}
+
+func guiSubjectBuildArgs(value string) ([]string, []string) {
+	tags := normalizeTagEntries([]string{value})
+	args := make([]string, 0, len(tags)*2)
+	for _, tag := range tags {
+		args = append(args, "-subject", tag)
+	}
+	return tags, args
 }
 
 func prependUnique(items []string, values ...string) []string {
