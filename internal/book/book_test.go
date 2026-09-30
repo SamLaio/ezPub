@@ -31,6 +31,19 @@ func TestSplitChaptersByRegex(t *testing.T) {
 	}
 }
 
+func TestDefaultChapterRegexSplitsArabicNumberDotHeadings(t *testing.T) {
+	bk, err := FromText("　　1. 災荒年\n內容\n　　2．重逢\n內容", TextOptions{
+		Title:        "測試書",
+		ChapterRegex: lang.DefaultChapterRegex,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(bk.Chapters) != 2 || bk.Chapters[1].Title != "2．重逢" {
+		t.Fatalf("chapters = %#v", bk.Chapters)
+	}
+}
+
 func TestRawHTMLTag(t *testing.T) {
 	blocks := paragraphs("##<img src=\"../images/a.jpg\" alt=\"a\"/>", TextOptions{
 		EnableRawHTML: true,
