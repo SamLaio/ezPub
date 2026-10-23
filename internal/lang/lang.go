@@ -1,6 +1,6 @@
 package lang
 
-const Version = "0.3.3"
+const Version = "0.3.4"
 
 const (
 	AppName           = "ezpub"
@@ -14,7 +14,7 @@ const (
 
 const DefaultChapterRegex = `^[\s　]*[第卷][0123456789一二三四五六七八九十零〇百千两兩]*[章回部节節集卷篇話话].*|^[\s　]*Chapter\s*[0123456789]+.*|^[\s　]*[0123456789]+\s*[.．、]\s*\S.*`
 
-const Usage = `ezpub 0.3.3 - maintainable EasyPub-style ebook builder
+const Usage = `ezpub 0.3.4 - maintainable EasyPub-style ebook builder
 
 Usage:
   ezpub build input.txt -o output.epub [options]

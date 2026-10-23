@@ -6,11 +6,31 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 
 	"ezpub/internal/book"
 )
+
+func TestGeneratedUUID(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "book.epub")
+	bk, err := book.FromText("第一章 開始\n測試內容", book.TextOptions{Title: "測試書"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := Write(path, bk); err != nil {
+		t.Fatal(err)
+	}
+	opf := readZipEntry(t, path, "EPUB/content.opf")
+	id := regexp.MustCompile(`urn:uuid:[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}`).FindString(opf)
+	if id == "" {
+		t.Fatalf("缺少合法 UUID v4：%s", opf)
+	}
+	if !strings.Contains(readZipEntry(t, path, "EPUB/toc.ncx"), `content="`+id+`"`) {
+		t.Fatal("NCX 識別碼與 OPF 不一致")
+	}
+}
 
 func TestWriteAndExtractText(t *testing.T) {
 	dir := t.TempDir()

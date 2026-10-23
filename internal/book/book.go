@@ -271,7 +271,7 @@ func SplitChapters(text string, opts TextOptions) ([]Chapter, error) {
 	var preface []string
 
 	for _, line := range lines {
-		if re.MatchString(line) {
+		if re.MatchString(line) && (opts.ChapterRegex != lang.DefaultChapterRegex || !lessonProse.MatchString(line)) {
 			if current != nil {
 				chapters = append(chapters, *current)
 			} else if len(nonBlank(preface)) > 0 {

@@ -4,7 +4,6 @@ import (
 	"archive/zip"
 	"bytes"
 	"crypto/rand"
-	"encoding/hex"
 	"fmt"
 	"html"
 	"io"
@@ -67,7 +66,11 @@ func Write(path string, bk *book.Book) error {
 	zw := zip.NewWriter(file)
 	defer zw.Close()
 
-	id := "urn:uuid:" + randomHex(16)
+	uuid, err := randomUUID()
+	if err != nil {
+		return err
+	}
+	id := "urn:uuid:" + uuid
 	now := time.Now().UTC().Format("2006-01-02T15:04:05Z")
 
 	if err := addStored(zw, "mimetype", []byte("application/epub+zip")); err != nil {
@@ -635,12 +638,14 @@ func mediaTypeFor(path string) string {
 	}
 }
 
-func randomHex(n int) string {
-	buf := make([]byte, n)
+func randomUUID() (string, error) {
+	buf := make([]byte, 16)
 	if _, err := rand.Read(buf); err != nil {
-		return fmt.Sprintf("%d", time.Now().UnixNano())
+		return "", fmt.Errorf("產生 EPUB UUID：%w", err)
 	}
-	return hex.EncodeToString(buf)
+	buf[6] = (buf[6] & 0x0f) | 0x40
+	buf[8] = (buf[8] & 0x3f) | 0x80
+	return fmt.Sprintf("%x-%x-%x-%x-%x", buf[:4], buf[4:6], buf[6:8], buf[8:10], buf[10:]), nil
 }
 
 func escape(s string) string {

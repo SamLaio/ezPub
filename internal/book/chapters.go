@@ -78,6 +78,8 @@ func WriteChapterPlan(path string, marks []ChapterMark) error {
 	return os.WriteFile(path, []byte(b.String()), 0644)
 }
 
+var lessonProse = regexp.MustCompile(`^[\s　]*第[0-9０-９一二三四五六七八九十零〇百千两兩]+[節节]\s*[課课](的[時时]候|[時时])[，,]`)
+
 func DetectChapterPlan(text string, opts TextOptions) ([]ChapterMark, error) {
 	lines := splitLines(text)
 	if opts.SplitCount > 0 {
@@ -97,7 +99,7 @@ func DetectChapterPlan(text string, opts TextOptions) ([]ChapterMark, error) {
 	var marks []ChapterMark
 	prefaceHasText := false
 	for i, line := range lines {
-		if re.MatchString(line) {
+		if re.MatchString(line) && (opts.ChapterRegex != lang.DefaultChapterRegex || !lessonProse.MatchString(line)) {
 			if len(marks) == 0 && prefaceHasText {
 				marks = append(marks, ChapterMark{
 					StartLine: 1,

@@ -44,6 +44,34 @@ func TestDefaultChapterRegexSplitsArabicNumberDotHeadings(t *testing.T) {
 	}
 }
 
+func TestDefaultChapterDetectionKeepsLessonSentenceAsProse(t *testing.T) {
+	for _, sentence := range []string{"第一節課的時候，大家看向窗外。", "第一節 課的時候，大家看向窗外。", "第一节课的时候，大家看向窗外。"} {
+		text := "第一章 開始\n" + sentence + "\n第二節 課程介紹\n內容"
+		opts := TextOptions{Title: "測試書", ChapterRegex: lang.DefaultChapterRegex}
+		marks, err := DetectChapterPlan(text, opts)
+		if err != nil || len(marks) != 2 {
+			t.Fatalf("章節表誤判正文：%#v，錯誤 %v", marks, err)
+		}
+		chapters, err := SplitChapters(text, opts)
+		if err != nil || len(chapters) != 2 || chapters[0].Blocks[0].Text != sentence {
+			t.Fatalf("拆章遺失正文：%#v，錯誤 %v", chapters, err)
+		}
+	}
+	custom := TextOptions{ChapterRegex: `^第一節課.*`}
+	marks, err := DetectChapterPlan("第一節課的時候，大家看向窗外。", custom)
+	if err != nil || len(marks) != 1 || !marks[0].SkipHeading {
+		t.Fatalf("不應改寫使用者明示正則：%#v，錯誤 %v", marks, err)
+	}
+	chapters, err := SplitChapters("第一節課的時候，大家看向窗外。", custom)
+	if err != nil || len(chapters) != 1 || chapters[0].Title != "第一節課的時候，大家看向窗外。" {
+		t.Fatalf("自訂拆章不應受限：%#v，錯誤 %v", chapters, err)
+	}
+	chapters, err = SplitChapters("第一節 課時管理\n內容", TextOptions{ChapterRegex: lang.DefaultChapterRegex})
+	if err != nil || len(chapters) != 1 || chapters[0].Title != "第一節 課時管理" {
+		t.Fatalf("合法課時標題不應被排除：%#v，錯誤 %v", chapters, err)
+	}
+}
+
 func TestRawHTMLTag(t *testing.T) {
 	blocks := paragraphs("##<img src=\"../images/a.jpg\" alt=\"a\"/>", TextOptions{
 		EnableRawHTML: true,
