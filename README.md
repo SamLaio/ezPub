@@ -86,12 +86,12 @@ GUI 版不開命令列視窗；需要查看 CLI help 時也可用 `go run`。顯
 
 ### 測試素材
 
-`test_file/` 使用《巴黎茶花女遺事》（小仲馬原著、林紓／王壽昌譯述）的公共財文本與舊 EasyPub 對照 EPUB。文字與測試封面來自維基文庫；依維護者提供的資料，逐項來源如下：
+`test_file/` 使用《巴黎茶花女遺事》（小仲馬原著、林紓／王壽昌譯述）的公共財文本與舊 EasyPub 對照 EPUB。文字來源為維基文庫；測試封面來源為台灣數位出版聯盟文章，頁面標註「國立師範大學圖書館藏書」。逐項來源如下：
 
 | 檔案 | 來源 | 記錄範圍 |
 | --- | --- | --- |
-| `巴黎茶花女遺事 - 小仲馬.txt` | 維基文庫 | 尚未記錄精確頁面與版本 |
-| `cover.jpg` | 維基文庫（維護者確認） | 尚未記錄原圖頁面與個別圖片授權 |
+| `巴黎茶花女遺事 - 小仲馬.txt` | [維基文庫：《巴黎茶花女遺事》](https://zh.wikisource.org/zh-hant/巴黎茶花女遺事) | 頁面明列小仲馬、林紓與王壽昌；已補精確來源頁，未推定測試檔的歷史下載版本 |
+| `cover.jpg` | [台灣數位出版聯盟：《茶花女》和《茶花女遺事》…](https://www.dpublishing.org.tw/2011/02/blog-post_04.html) | 已比對同一封面影像；文章標註「國立師範大學圖書館藏書」，未另推定攝影者或個別圖片授權 |
 | `images.jpg` | [Alamy：Strawberries falling out of a red bucket on a black table，圖片編號 128210808](https://www.alamy.com/stock-photo-strawberries-falling-out-of-a-red-bucket-on-a-black-table-128210808.html?imageid=4410535B-F775-479C-8BB7-CC4369716AC6&pn=1&searchId=51ebe53bd100fd5732359eed8bdc05e0&searchtype=9) | 維護者提供來源網址；尚未記錄原攝影者及再散布授權 |
 | `single-fresh-red-strawberry-on-table-green-background-food-fruit-sweet-macro-juicy-plant-image-photo.jpg` | [Facebook 群組貼文](https://www.facebook.com/groups/724616145130798/posts/2230003161258748/) | 維護者提供取得來源；貼文不等同原攝影者或授權聲明 |
 
