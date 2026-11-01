@@ -4,13 +4,13 @@
 
 ## 版本
 
-- 目前版本：`0.3.1`
+- 目前版本：`0.3.5`
 - 版本號來源：`internal/lang/lang.go`
 - README 標題與內容要和目前版本一致。
 
 ## 核心功能
 
-0.1 版核心功能如下：
+目前核心功能如下：
 
 - TXT 轉 EPUB
 - Windows GUI：`ezpub gui`
@@ -131,13 +131,13 @@
 9. 如果 release 資料夾下沒有該版本 exe，先建置：
 
 ```powershell
-go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.3.1-windows-amd64.exe .\cmd\ezpub
+go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.3.5-windows-amd64.exe .\cmd\ezpub
 ```
 
 10. 發布前，將該版本 exe 與整個 `release/tools/` 資料夾壓縮成 zip，例如 `release/ezpub-0.3.0-windows-amd64.zip`：
 
 ```powershell
-Compress-Archive -Force -Path .\release\ezpub-0.3.1-windows-amd64.exe, .\release\tools -DestinationPath .\release\ezpub-0.3.1-windows-amd64.zip
+Compress-Archive -Force -Path .\release\ezpub-0.3.5-windows-amd64.exe, .\release\tools -DestinationPath .\release\ezpub-0.3.5-windows-amd64.zip
 ```
 
 11. 發布時，只上傳該版本 zip 作為 release 附件；不要再把 exe 與 `pyftsubset.exe` 分開上傳。
@@ -146,7 +146,7 @@ Compress-Archive -Force -Path .\release\ezpub-0.3.1-windows-amd64.exe, .\release
 ## Build 輸出慣例
 
 - 一般程式修改後只需執行測試，不主動重新產生 exe。
-- 只有使用者明確要求「產 exe」「產出 exe」或同義指令時，才重新建置 exe。
+- 只有使用者明確要求「產 exe」「產出 exe」或正式 release 時，才依發版規範重新建置 exe。
 - 重新建置 exe 前後要進行必要測試；至少執行 `go test ./...`，並確認輸出的 Windows GUI exe 不會開啟命令列視窗。
 - 不使用 `bin/ezpub.exe` 作為正式產物。
 - 所有 exe 都必須輸出到 `release/`，包含正式版、測試版、GUI 版、臨時驗證 build。
@@ -167,8 +167,8 @@ release/ezpub-<版本號>-windows-amd64.zip
 範例：
 
 ```powershell
-go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.3.1-windows-amd64.exe .\cmd\ezpub
-Compress-Archive -Force -Path .\release\ezpub-0.3.1-windows-amd64.exe, .\release\tools -DestinationPath .\release\ezpub-0.3.1-windows-amd64.zip
+go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.3.5-windows-amd64.exe .\cmd\ezpub
+Compress-Archive -Force -Path .\release\ezpub-0.3.5-windows-amd64.exe, .\release\tools -DestinationPath .\release\ezpub-0.3.5-windows-amd64.zip
 ```
 
 ## Git Ignore 規則

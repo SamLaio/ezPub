@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.3.5 - 2026-11-01
+
+- 文件與版本維護版：統一README、CLI版本及維護慣例，更新建置與發版範例。
+- 明確區分外部EPUBCheck驗證與尚未整合的驗證器／Kindle Previewer；本版未修改TXT拆章或EPUB輸出邏輯。
+- go test ./... 通過；公共財TXT輸出及外部ZIP／CSS／EPUBCheck驗證通過。
+
 ## 0.3.4 - 2026-10-23
 
 - 修正自動識別碼為標準 UUID v4，OPF 與 NCX 保持一致，消除 EPUBCheck OPF-085 警告；亂數失敗回報錯誤，不以時間戳冒充 UUID。保留明確指定識別碼，補輸出回歸測試。
