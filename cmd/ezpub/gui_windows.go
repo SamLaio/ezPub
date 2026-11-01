@@ -392,13 +392,7 @@ func showGUI(state *guiState) error {
 	if editorPath == "" {
 		editorPath = strings.TrimSpace(state.cfg.Recent.Editor)
 	}
-	fontType := state.cfg.Recent.FontTypeInt()
-	if guiPrefsOK && validGUIFontType(guiPrefs.FontType) {
-		fontType = guiPrefs.FontType
-	}
-	if fontType == 0 {
-		fontType = 3
-	}
+	fontType := initialGUIFontType(guiPrefs, guiPrefsOK)
 	_, subsetToolAvailable := convert.FindFontSubsetter("")
 	cssMode := state.cfg.Recent.CSSOverwriteInt()
 	if guiPrefsOK && validGUICSSMode(guiPrefs.CSSMode) {
@@ -1201,10 +1195,7 @@ func fontTab(customFontRB, embeddedFontRB, defaultFontRB **walk.RadioButton, cus
 		customFontText = firstNonEmpty(prefs.CustomFont, customFontText)
 	}
 	if fontType == nil {
-		defaultFontType := cfg.Recent.FontTypeInt()
-		if defaultFontType == 0 {
-			defaultFontType = 3
-		}
+		defaultFontType := initialGUIFontType(prefs, prefsOK)
 		fontType = &defaultFontType
 	}
 	selectFontType := func(value int) {

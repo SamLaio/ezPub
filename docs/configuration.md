@@ -13,6 +13,8 @@
 
 ## 常用設定的行為
 
+GUI 尚未儲存字體選擇時，預選「使用閱讀器默認字體」，不採用自動載入的舊 EasyPub `fonttype`；已儲存的 ezPub 字體選擇會保留在 `setting/gui.json`，下次啟動恢復。字型路徑仍可由舊設定補入，供使用者手動選用。命令列明確使用 `-config` 時，仍依下表套用舊設定。
+
 | 設定 | ezPub 行為 |
 | --- | --- |
 | `RecentOptions.splitmode=2` | 使用 `splitcount` 均分章節 |

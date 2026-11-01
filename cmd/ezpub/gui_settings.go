@@ -57,6 +57,14 @@ func validGUIFontType(value int) bool {
 	return value >= 1 && value <= 3
 }
 
+func initialGUIFontType(settings guiSettings, loaded bool) int {
+	if loaded && validGUIFontType(settings.FontType) {
+		return settings.FontType
+	}
+	// 舊 EasyPub 設定可自動載入，但不能替首次啟動的 GUI 選擇嵌入字型。
+	return 3
+}
+
 func validGUICSSMode(value int) bool {
 	return value >= 0 && value <= 2
 }

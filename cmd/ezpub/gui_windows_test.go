@@ -9,6 +9,29 @@ import (
 	"ezpub/internal/config"
 )
 
+func TestInitialGUIFontType(t *testing.T) {
+	for _, tt := range []struct {
+		name   string
+		stored int
+		loaded bool
+		want   int
+	}{
+		{"首次啟動", 0, false, 3},
+		{"未載入的資料不採用", 2, false, 3},
+		{"保留自訂字型", 1, true, 1},
+		{"保留內嵌字型", 2, true, 2},
+		{"保留閱讀器字型", 3, true, 3},
+		{"缺少選項", 0, true, 3},
+		{"無效選項", 4, true, 3},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := initialGUIFontType(guiSettings{FontType: tt.stored}, tt.loaded); got != tt.want {
+				t.Fatalf("font type = %d, want %d", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestNormalizeTagEntriesSplitsCommaAndTrims(t *testing.T) {
 	got := normalizeTagEntries([]string{" t1, t2 ", "t1， t3; ; t4"})
 	want := []string{"t1", "t2", "t3", "t4"}
