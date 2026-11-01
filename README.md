@@ -62,3 +62,30 @@ go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.3.6-windows-amd64.exe .\c
 ```
 
 GUI 版不開命令列視窗；需要查看 CLI help 時也可用 `go run`。顯示文字與預設規則集中在 `internal/lang/lang.go`。本專案重建工作流，不反編譯舊 EasyPub，也不逐行移植舊 .NET 程式。
+
+## 第三方來源與致謝
+
+### 實際使用的 Go 套件
+
+| 專案／作者 | 使用範圍 | 上游授權 |
+| --- | --- | --- |
+| [Walk／The Walk Authors](https://github.com/lxn/walk) | Windows GUI 控制項與宣告式介面 | BSD-3-Clause |
+| [Win／The Win Authors](https://github.com/lxn/win) | Windows API 封裝 | BSD-3-Clause |
+| [golang.org/x/text／The Go Authors](https://pkg.go.dev/golang.org/x/text) | 文字編碼與轉換 | BSD-3-Clause |
+| [golang.org/x/sys／The Go Authors](https://pkg.go.dev/golang.org/x/sys) | Windows 系統呼叫相依 | BSD-3-Clause |
+| [govaluate／George Lester](https://github.com/Knetic/govaluate) | Walk 使用的運算式相依 | MIT |
+
+實際鎖定版本見 `go.mod`／`go.sum`；`indirect` 標記不代表未納入程式，也不代表可省略署名。
+
+### 隨附工具與行為參考
+
+- [fontTools／Just van Rossum、Behdad Esfahbod 與貢獻者](https://github.com/fonttools/fonttools)：Windows release 隨附 `tools/pyftsubset.exe`，用於內嵌字型子集化；fontTools 主要採 MIT，所含個別元件依其原授權。它是外部工具，不是 ezPub 自行實作的子集化引擎。
+- EasyPub：TXT 建書流程、GUI 操作與 `config.xml` 相容性參考。依原程式可觀察行為與設定重建，沒有反編譯或逐行移植舊 .NET 程式；目前未有可核實的原作者／官方公開網址，保留工具名稱及相容範圍，不猜測署名。
+- [Sigil](https://github.com/Sigil-Ebook/Sigil) 的 SubsetFonts plugin：子集化流程參考，非必須安裝的 plugin；未將其列為 ezPub 自有引擎。
+- [calibre／Kovid Goyal 與貢獻者](https://github.com/kovidgoyal/calibre)：參考 Edit「整理到資料夾中」的 EPUB 資源歸位行為。
+
+### 測試素材
+
+`test_file/` 使用《巴黎茶花女遺事》（小仲馬原著、林紓／王壽昌譯述）的公共財文本與舊 EasyPub 對照 EPUB。既有維護紀錄註明文字來自維基文庫，但未保存精確頁面與版本；此資訊仍待補證，不能推及同資料夾圖片均為公共財。測試封面及插圖的原作者、來源網址與再散布授權尚未完整記錄，應逐項補證。
+
+ezPub 本身採 [GPL v3](LICENSE)。本專案授權不取代套件、外部執行檔、測試素材或使用者嵌入字型的原有授權；上表是已確認的主要組件與參考來源，不宣稱已完整盤點 pyftsubset 打包內部的所有組件。
