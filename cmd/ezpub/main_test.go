@@ -2,6 +2,8 @@ package main
 
 import (
 	"archive/zip"
+	"image"
+	"image/png"
 	"io"
 	"os"
 	"path/filepath"
@@ -157,20 +159,32 @@ func TestCollectImageAssetsRejectsDuplicateBasenames(t *testing.T) {
 }
 
 func TestImageReference(t *testing.T) {
-	got := imageReference("images.jpg")
-	want := `##<div class="centeredimage"><img src="images/images.jpg" alt="images.jpg" class="attpic" /></div>`
+	got := imageReference("sample.png")
+	want := `##<div class="centeredimage"><img src="images/sample.png" alt="sample.png" class="attpic" /></div>`
 	if got != want {
 		t.Fatalf("image reference = %q, want %q", got, want)
 	}
 }
 
-func TestCollectFixtureImages(t *testing.T) {
-	assets, err := collectImageAssets([]string{filepath.Join("..", "..", "test_file", "images.jpg")})
+func TestCollectGeneratedImage(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "sample.png")
+	f, err := os.Create(path)
 	if err != nil {
-		t.Skipf("fixture image not available: %v", err)
+		t.Fatal(err)
 	}
-	if len(assets) != 1 || assets[0].Name != "images.jpg" {
-		t.Fatalf("assets = %#v, want images.jpg", assets)
+	if err := png.Encode(f, image.NewRGBA(image.Rect(0, 0, 2, 2))); err != nil {
+		_ = f.Close()
+		t.Fatal(err)
+	}
+	if err := f.Close(); err != nil {
+		t.Fatal(err)
+	}
+	assets, err := collectImageAssets([]string{path})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(assets) != 1 || assets[0].Name != "sample.png" || assets[0].Path != path {
+		t.Fatalf("assets = %#v, want generated sample.png", assets)
 	}
 }
 

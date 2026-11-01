@@ -92,8 +92,7 @@ GUI 版不開命令列視窗；需要查看 CLI help 時也可用 `go run`。顯
 | --- | --- | --- |
 | `巴黎茶花女遺事 - 小仲馬.txt` | [維基文庫：《巴黎茶花女遺事》](https://zh.wikisource.org/zh-hant/巴黎茶花女遺事) | 頁面明列小仲馬、林紓與王壽昌；已補精確來源頁，未推定測試檔的歷史下載版本 |
 | `cover.jpg` | [台灣數位出版聯盟：《茶花女》和《茶花女遺事》…](https://www.dpublishing.org.tw/2011/02/blog-post_04.html) | 已比對同一封面影像；文章標註「國立師範大學圖書館藏書」，未另推定攝影者或個別圖片授權 |
-| `images.jpg` | [Alamy：Strawberries falling out of a red bucket on a black table，圖片編號 128210808](https://www.alamy.com/stock-photo-strawberries-falling-out-of-a-red-bucket-on-a-black-table-128210808.html?imageid=4410535B-F775-479C-8BB7-CC4369716AC6&pn=1&searchId=51ebe53bd100fd5732359eed8bdc05e0&searchtype=9) | 維護者提供來源網址；尚未記錄原攝影者及再散布授權 |
 
-Alamy 圖片頁面本次未能讀取內容，來源依維護者提供記錄；沒有將來源連結當成已核實的再散布授權，也不將文字的公共財狀態套用到全部圖片。
+插圖收集測試使用程式即時產生的 PNG，不依賴外部圖庫照片。文字的公共財狀態不自動適用於其他圖片。
 
 ezPub 本身採 [GPL v3](LICENSE)。本專案授權不取代套件、外部執行檔、測試素材或使用者嵌入字型的原有授權；上表是已確認的主要組件與參考來源，不宣稱已完整盤點 pyftsubset 打包內部的所有組件。
