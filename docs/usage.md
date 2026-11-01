@@ -5,7 +5,7 @@
 以下範例在 PowerShell 執行，先將變數設為實際解壓位置：
 
 ```powershell
-$ezpub = "C:\path\to\ezpub-0.3.5-windows-amd64.exe"
+$ezpub = "C:\path\to\ezpub-0.3.6-windows-amd64.exe"
 & $ezpub version
 & $ezpub gui .\novel.txt
 ```
