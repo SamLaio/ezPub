@@ -59,11 +59,10 @@
   - `test_file/巴黎茶花女遺事 - 小仲馬3.epub`
   - `test_file/cover.jpg`
   - `test_file/images.jpg`
-  - `test_file/single-fresh-red-strawberry-on-table-green-background-food-fruit-sweet-macro-juicy-plant-image-photo.jpg`
 - `test_file/巴黎茶花女遺事 - 小仲馬.epub` 是使用原 EasyPub 製作的對照 EPUB。
 - `test_file/巴黎茶花女遺事 - 小仲馬2.epub` 是無外部封面圖、使用文字封面的原 EasyPub 對照 EPUB。
 - `test_file/巴黎茶花女遺事 - 小仲馬3.epub` 是無外部封面圖、且未勾選文字封面的原 EasyPub 對照 EPUB。
-- `test_file/cover.jpg` 用於外部封面圖測試；`test_file/images.jpg` 與另一張長檔名草莓圖用於插圖功能測試。
+- `test_file/cover.jpg` 用於外部封面圖測試；`test_file/images.jpg` 用於插圖功能測試。
 - 後續測試、原程式行為對照、EPUB 抽 TXT 比對、Go 版輸出回歸測試，優先使用這本書。
 - `test_file/` 中的公共財 fixture 是測試資料，不視為一般轉檔輸出；可例外納入版本庫。
 
