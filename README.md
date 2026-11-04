@@ -4,11 +4,11 @@
 
 ezPub 是 EasyPub 工作流的 Go 重製版，可讀取舊 EasyPub `config.xml` 中已支援的設定。它目前只製作 EPUB，不提供 MOBI／AZW3 或 KindleGen。
 
-目前版本：**0.3.6**。版本異動見 [CHANGELOG](CHANGELOG.md)。
+目前版本：**0.3.7**。版本異動見 [CHANGELOG](CHANGELOG.md)。
 
 ## 下載與快速開始
 
-從 [Releases](https://github.com/SamLaio/ezPub/releases) 下載 Windows amd64 ZIP，完整解壓，保留執行檔旁的 `tools/` 資料夾。雙擊 `ezpub-0.3.6-windows-amd64.exe` 開啟 GUI；一般使用不需安裝 Go。
+從 [Releases](https://github.com/SamLaio/ezPub/releases) 下載 Windows amd64 ZIP，完整解壓，保留執行檔旁的 `tools/` 資料夾。雙擊 `ezpub-0.3.7-windows-amd64.exe` 開啟 GUI；一般使用不需安裝 Go。
 
 1. 開啟 TXT，確認文字編碼與書名、作者。
 2. 檢查章節清單，修正誤判或漏掉的章節。
@@ -17,12 +17,14 @@ ezPub 是 EasyPub 工作流的 Go 重製版，可讀取舊 EasyPub `config.xml` 
 
 GUI 的主要工作區包含章節、版式、字體、書籍資料、定制 CSS、插圖與高級選項。標籤可用逗號、頓號或分號分隔，分別寫入 OPF subject。
 
+內嵌字型可多選：內建 CSS 將第一字型連到內文、第二字型連到標題，單字型則共用；自訂 CSS 保持優先，子集化也保留字型檔名，避免引用失效。
+
 ## 命令列快速建書
 
 在解壓目錄執行：
 
 ```powershell
-.\ezpub-0.3.6-windows-amd64.exe build .\novel.txt -o .\novel.epub -title "書名" -author "作者"
+.\ezpub-0.3.7-windows-amd64.exe build .\novel.txt -o .\novel.epub -title "書名" -author "作者"
 ```
 
 若檔名為 `書名 - 作者.txt`，未指定書名與作者時可由檔名拆出。舊 Big5／CP950 文字建議明確加 `-encoding big5` 或 `-encoding cp950`，避免自動辨識誤判。
@@ -58,7 +60,7 @@ go test ./...
 Windows GUI 建置：
 
 ```powershell
-go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.3.6-windows-amd64.exe .\cmd\ezpub
+go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.3.7-windows-amd64.exe .\cmd\ezpub
 ```
 
 GUI 版不開命令列視窗；需要查看 CLI help 時也可用 `go run`。顯示文字與預設規則集中在 `internal/lang/lang.go`。本專案重建工作流，不反編譯舊 EasyPub，也不逐行移植舊 .NET 程式。

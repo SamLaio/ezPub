@@ -165,6 +165,19 @@ func FromText(text string, opts TextOptions) (*Book, error) {
 
 	fonts := cleanPaths(opts.Fonts)
 	css := DefaultCSS(opts.Layout)
+	fontDefs, embeddedFamilies := fontCSS(fonts)
+	externalDefs, externalFamilies := externalFontCSS(opts.FontSources)
+	bodyFamilies := append([]string{}, externalFamilies...)
+	if len(embeddedFamilies) > 0 {
+		bodyFamilies = append(bodyFamilies, embeddedFamilies[0])
+	}
+	if len(embeddedFamilies) > 2 {
+		bodyFamilies = append(bodyFamilies, embeddedFamilies[2:]...)
+	}
+	css = applyBodyFontFamily(css, bodyFamilies)
+	if len(embeddedFamilies) > 1 {
+		css += fmt.Sprintf("\nh1, h2, h3, h4, h5, h6, .booktitle, .bookauthor, .titletoc, .title, .titlel1top, .titlel1std, .titlel1single, .titlel2top, .titlel2std, .titlel2single, .titlel3top, .titlel3std, .titlel3single, .titlel4std {\n  font-family: %q, %q, serif;\n}\n", embeddedFamilies[1], embeddedFamilies[0])
+	}
 	switch opts.CSSMode {
 	case 1:
 		css += "\n" + opts.CustomCSS
@@ -173,10 +186,6 @@ func FromText(text string, opts TextOptions) (*Book, error) {
 			css = opts.CustomCSS
 		}
 	}
-	fontDefs, embeddedFamilies := fontCSS(fonts)
-	externalDefs, externalFamilies := externalFontCSS(opts.FontSources)
-	fontFamilies := append(externalFamilies, embeddedFamilies...)
-	css = applyBodyFontFamily(css, fontFamilies)
 	css += fontDefs
 	css += externalDefs
 

@@ -37,9 +37,12 @@ func SubsetFonts(fonts []string, text, tool string) ([]string, func(), error) {
 
 	out := make([]string, 0, len(fonts))
 	for i, font := range fonts {
-		ext := filepath.Ext(font)
-		name := strings.TrimSuffix(filepath.Base(font), ext)
-		subsetPath := filepath.Join(dir, fmt.Sprintf("%s-subset-%d%s", name, i+1, ext))
+		fontDir := filepath.Join(dir, fmt.Sprint(i+1))
+		if err := os.Mkdir(fontDir, 0700); err != nil {
+			cleanup()
+			return nil, func() {}, err
+		}
+		subsetPath := filepath.Join(fontDir, filepath.Base(font))
 		cmd := exec.Command(tool,
 			font,
 			"--text-file="+textPath,

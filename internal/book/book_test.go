@@ -137,6 +137,47 @@ func TestExternalFontSourcesDoNotDuplicateBodySelector(t *testing.T) {
 	}
 }
 
+func TestReplacementCSSPreservesFontChoices(t *testing.T) {
+	custom := `body { font-family: "內文字型"; } h1 { font-family: "標題字型"; }`
+	for _, css := range []string{custom, ""} {
+		bk, err := FromText("內容", TextOptions{CSSMode: 2, CustomCSS: css, Fonts: []string{"body.otf", "heading.ttf"}})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if css != "" && !strings.Contains(bk.CSS, custom) {
+			t.Fatal("替換模式改寫自訂字型設定")
+		}
+		if css == "" && !strings.Contains(bk.CSS, `font-family: "ezpub-font-1", serif;`) {
+			t.Fatal("空自訂CSS應沿用預設字型設定")
+		}
+		if !strings.Contains(bk.CSS, `../fonts/body.otf`) || !strings.Contains(bk.CSS, `../fonts/heading.ttf`) {
+			t.Fatal("嵌入字型宣告遺失")
+		}
+	}
+}
+
+func TestDefaultFontsLinkBodyAndHeadings(t *testing.T) {
+	for _, fonts := range [][]string{nil, {"body.otf"}, {"body.otf", "heading.ttf"}} {
+		bk, err := FromText("第一章\n內容", TextOptions{Fonts: fonts})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(fonts) == 0 && strings.Contains(bk.CSS, "ezpub-font-") {
+			t.Fatal("未選字型卻建立字型連結")
+		}
+		if len(fonts) > 0 && !strings.Contains(bk.CSS, `font-family: "ezpub-font-1", serif;`) {
+			t.Fatal("第一字型未連到內文")
+		}
+		if len(fonts) == 2 && !strings.Contains(bk.CSS, `font-family: "ezpub-font-2", "ezpub-font-1", serif;`) {
+			t.Fatal("第二字型未連到標題")
+		}
+	}
+	bk, err := FromText("內容", TextOptions{Fonts: []string{"body.otf", "heading.ttf"}, CSSMode: 1, CustomCSS: `h1 { font-family: "自訂標題"; }`})
+	if err != nil || strings.LastIndex(bk.CSS, `font-family: "自訂標題"`) < strings.LastIndex(bk.CSS, `font-family: "ezpub-font-2", "ezpub-font-1", serif;`) {
+		t.Fatal("附加自訂CSS未優先於內建字型連結")
+	}
+}
+
 func TestCustomCSSModes(t *testing.T) {
 	skipped, err := FromText("內容", TextOptions{
 		Title:     "測試書",

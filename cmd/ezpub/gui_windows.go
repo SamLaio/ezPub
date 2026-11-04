@@ -577,7 +577,9 @@ func showGUI(state *guiState) error {
 		if fontType == 1 {
 			add("-font-source", customFontLE.Text())
 		} else if fontType == 2 {
-			add("-font", fontLE.Text())
+			for _, path := range strings.Split(fontLE.Text(), ";") {
+				add("-font", path)
+			}
 		}
 		add("-line-height", numberIntText(lineHeightNE, intValue(state.cfg.Recent.LineHeight, 130)))
 		add("-font-size", numberIntText(fontSizeNE, intValue(state.cfg.Recent.FontSize, 100)))
@@ -1181,7 +1183,7 @@ func fontTab(customFontRB, embeddedFontRB, defaultFontRB **walk.RadioButton, cus
 	fonts := cfg.Recent.EmbeddedFonts()
 	fontText := ""
 	if len(fonts) > 0 {
-		fontText = fonts[0]
+		fontText = strings.Join(fonts, ";")
 	}
 	if prefsOK {
 		fontText = firstNonEmpty(prefs.EmbeddedFont, fontText)
@@ -1221,15 +1223,15 @@ func fontTab(customFontRB, embeddedFontRB, defaultFontRB **walk.RadioButton, cus
 		PushButton{AssignTo: &browseBtn, Text: "...", OnClicked: func() {
 			defer debugRecover("browseFont")
 			debugLog("action=browse_font")
-			path, ok, err := openFileDialog(owner, "選擇字體", "Font files (*.ttf;*.otf)|*.ttf;*.otf|All files (*.*)|*.*")
+			paths, ok, err := openMultipleDialog(owner, "選擇字體（先內文、後標題）", "Font files (*.ttf;*.otf)|*.ttf;*.otf|All files (*.*)|*.*")
 			if err != nil {
 				showError(err)
 				return
 			}
 			if ok {
-				debugLog("font selected: %q", path)
+				debugLog("fonts selected: %q", paths)
 				selectFontType(2)
-				_ = (*fontLE).SetText(path)
+				_ = (*fontLE).SetText(strings.Join(paths, ";"))
 			}
 		}},
 	}
@@ -1241,6 +1243,8 @@ func fontTab(customFontRB, embeddedFontRB, defaultFontRB **walk.RadioButton, cus
 		embeddedChildren = append(embeddedChildren, CheckBox{AssignTo: subsetFontsCB, Text: "僅嵌入子集", Checked: subsetChecked})
 	}
 	children = append(children, embeddedChildren...)
+	var orderLabel *walk.Label
+	children = append(children, Label{AssignTo: &orderLabel, Text: "第一字型：內文；第二字型：標題。可用分號調整順序。"})
 	children = append(children, RadioButton{AssignTo: defaultFontRB, Text: "使用閱讀器默認字體", Value: 3, OnClicked: func() { selectFontType(3) }})
 	return fixedPage("字體", children, func() {
 		setWidgetBounds(*customFontRB, 18, 28, 120, 26)
@@ -1248,6 +1252,7 @@ func fontTab(customFontRB, embeddedFontRB, defaultFontRB **walk.RadioButton, cus
 		setWidgetBounds(*embeddedFontRB, 18, 100, 120, 26)
 		setWidgetBounds(*fontLE, 150, 96, 270, 28)
 		setWidgetBounds(browseBtn, 435, 96, 44, 28)
+		setWidgetBounds(orderLabel, 150, 132, 460, 26)
 		if subsetToolAvailable && subsetFontsCB != nil && *subsetFontsCB != nil {
 			setWidgetBounds(*subsetFontsCB, 495, 98, 110, 26)
 		}

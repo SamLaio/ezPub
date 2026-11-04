@@ -32,6 +32,37 @@ func TestGeneratedUUID(t *testing.T) {
 	}
 }
 
+func TestTwoEmbeddedFontsLinkDefaultCSS(t *testing.T) {
+	dir := t.TempDir()
+	var fonts []string
+	for _, name := range []string{"body.otf", "heading.ttf"} {
+		path := filepath.Join(dir, name)
+		if err := os.WriteFile(path, []byte("font fixture "+name), 0600); err != nil {
+			t.Fatal(err)
+		}
+		fonts = append(fonts, path)
+	}
+	bk, err := book.FromText("第一章\n正文", book.TextOptions{Title: "測試", Fonts: fonts, ChapterRegex: `^第.*章$`})
+	if err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(dir, "book.epub")
+	if err := Write(path, bk); err != nil {
+		t.Fatal(err)
+	}
+	css := readZipEntry(t, path, "EPUB/styles/style.css")
+	for _, want := range []string{`font-family: "ezpub-font-1", serif;`, `font-family: "ezpub-font-2", "ezpub-font-1", serif;`, "../fonts/body.otf", "../fonts/heading.ttf"} {
+		if !strings.Contains(css, want) {
+			t.Fatalf("CSS缺少字型連結：%s", want)
+		}
+	}
+	for _, name := range []string{"body.otf", "heading.ttf"} {
+		if readZipEntry(t, path, "EPUB/fonts/"+name) != "font fixture "+name {
+			t.Fatalf("包內字型不符：%s", name)
+		}
+	}
+}
+
 func TestWriteAndExtractText(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "book.epub")

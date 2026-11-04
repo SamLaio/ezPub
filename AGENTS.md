@@ -4,9 +4,16 @@
 
 ## 版本
 
-- 目前版本：`0.3.6`
+- 目前版本：`0.3.7`
 - 版本號來源：`internal/lang/lang.go`
 - README 標題與內容要和目前版本一致。
+
+## 日常修改與發版
+
+- 日常修正不必每次升版；不得因修改程式、詞庫、測試或文件，就自動修改版號、建立 tag 或發布 release。
+- 先完成實際修改，再依最終修改內容補寫 CHANGELOG 的「未發布」紀錄即可；日常修改不另外撰寫 release notes，也不因此升版或發版。必要測試照常完成；只有使用方式或現行行為受影響時才同步更新 README／使用說明。
+- commit／push 與升版／release 分開處理；使用者要求 commit／push，不代表要求升版或發版。
+- 只有使用者明確要求升版／發版，或已有使用者確認的發版計畫時，才依該範圍更新版本號、準備發版說明、建立 tag、建置產物及發布 release。
 
 ## 核心功能
 
@@ -110,7 +117,7 @@
 1. 執行 `go test ./...`。
 2. 確認已完成 Commit 前檢查。
 3. 再次檢查目前程式功能是否和 `README.md` 一致；若不一致，先修改 `README.md`。
-4. 產生一份 release 說明草稿，檔名以版本號分界，例如 `release-notes/0.3.0.md`。
+4. 僅在準備正式發版時產生 release 說明草稿，檔名以版本號分界，例如 `release-notes/0.3.0.md`；日常 commit／push 不強制產生。
 5. release 說明草稿不進版本庫，已列入 `.gitignore`。
 6. 不提交 `.exe`，`.exe` 只在 release 時產生。
 
@@ -129,13 +136,13 @@
 9. 如果 release 資料夾下沒有該版本 exe，先建置：
 
 ```powershell
-go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.3.6-windows-amd64.exe .\cmd\ezpub
+go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.3.7-windows-amd64.exe .\cmd\ezpub
 ```
 
 10. 發布前，將該版本 exe 與整個 `release/tools/` 資料夾壓縮成 zip，例如 `release/ezpub-0.3.0-windows-amd64.zip`：
 
 ```powershell
-Compress-Archive -Force -Path .\release\ezpub-0.3.6-windows-amd64.exe, .\release\tools -DestinationPath .\release\ezpub-0.3.6-windows-amd64.zip
+Compress-Archive -Force -Path .\release\ezpub-0.3.7-windows-amd64.exe, .\release\tools -DestinationPath .\release\ezpub-0.3.7-windows-amd64.zip
 ```
 
 11. 發布時，只上傳該版本 zip 作為 release 附件；不要再把 exe 與 `pyftsubset.exe` 分開上傳。
@@ -165,8 +172,8 @@ release/ezpub-<版本號>-windows-amd64.zip
 範例：
 
 ```powershell
-go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.3.6-windows-amd64.exe .\cmd\ezpub
-Compress-Archive -Force -Path .\release\ezpub-0.3.6-windows-amd64.exe, .\release\tools -DestinationPath .\release\ezpub-0.3.6-windows-amd64.zip
+go build -ldflags="-H=windowsgui" -o .\release\ezpub-0.3.7-windows-amd64.exe .\cmd\ezpub
+Compress-Archive -Force -Path .\release\ezpub-0.3.7-windows-amd64.exe, .\release\tools -DestinationPath .\release\ezpub-0.3.7-windows-amd64.zip
 ```
 
 ## Git Ignore 規則
