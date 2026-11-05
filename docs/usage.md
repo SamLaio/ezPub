@@ -5,7 +5,7 @@
 以下範例在 PowerShell 執行，先將變數設為實際解壓位置：
 
 ```powershell
-$ezpub = "C:\path\to\ezpub-0.3.6-windows-amd64.exe"
+$ezpub = "C:\path\to\ezpub-0.3.8-windows-amd64.exe"
 & $ezpub version
 & $ezpub gui .\novel.txt
 ```
@@ -63,7 +63,22 @@ GB18030 解碼。
 
 使用 `-css style.css -css-mode 2` 完整替換預設 CSS 時，自訂的內文與標題字型設定會保留，不以自動選用的字型覆蓋。搭配 `-font` 時仍會嵌入字型資源及附加字型宣告；CSS 中的資源路徑須對應包內檔名。
 
+`-css-mode 1` 將自訂CSS附加於內建CSS之後；`2` 以非空白自訂CSS完整替換，空白內容仍沿用內建CSS。模式 `0` 原則上忽略自訂CSS，但明確指定 `-css` 檔案時，建書入口會將模式0改為附加模式；要完整替換請明確傳入2，不能只選檔案就假定已替換。
+
 內建 CSS 與嵌入字型依選取順序連結：第一個字型用於內文，第二個用於章節標題、目錄標題及文字封面標題；只有一個字型時，標題沿用內文字型。命令列可重複指定 `-font body.otf -font heading.ttf`；GUI 的字型選檔支援多選，欄位以分號分隔，可調整先後順序。附加自訂 CSS 時，自訂規則優先；完整替換時完全採用自訂規則。子集化保留原檔名，所以 `../fonts/body.otf` 等自訂字型路徑仍然有效。
+
+### 自訂CSS如何引用嵌入字型
+
+工具為選取字型依序附加 `ezpub-font-1`、`ezpub-font-2` 等 `@font-face` 別名。完整替換模式保留你自己的選擇器，不會自動替你補上內文與標題的字型設定。可在自訂CSS中使用這些別名：
+
+```css
+body { font-family: "ezpub-font-1", serif; }
+h1, h2, h3, h4, h5, h6, .booktitle, .bookauthor, .titletoc, .title {
+  font-family: "ezpub-font-2", "ezpub-font-1", serif;
+}
+```
+
+若改用字型自己的家族名稱，就需自行撰寫相符的 `@font-face`，例如在包內 `styles/style.css` 以 `../fonts/body.otf` 引用檔案。嵌入成功不等於CSS已套用，應核對字型別名／家族、相對路徑與正文實際使用的選擇器。ezPub沒有固定採用個人字型資料夾或CSS的全域預設。
 
 ## 章節處理
 
@@ -155,7 +170,7 @@ release 版會在 `tools/pyftsubset.exe` 隨附 fontTools 的 `pyftsubset`。找
 & $ezpub build novel.txt -o novel.epub -font .\font.ttf -subset-fonts
 ```
 
-ezPub 會依序尋找 exe 同目錄的 `tools/pyftsubset.exe`、`pyftsubset.exe`，最後才找 PATH。CLI 仍可手動指定：
+CLI明確指定 `-subset-tool` 時只檢查該路徑；不存在則子集化失敗，不再自動尋找。未指定時，依序找exe旁的 `tools/pyftsubset.exe`、`pyftsubset.exe`，再找目前工作目錄下的 `release/tools/pyftsubset.exe`、`release/pyftsubset.exe`、`tools/pyftsubset.exe`、`pyftsubset.exe`，最後才找PATH中的 `pyftsubset.exe`／`pyftsubset`。可手動指定：
 
 ```powershell
 -subset-tool C:\path\pyftsubset.exe

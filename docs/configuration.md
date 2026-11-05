@@ -5,8 +5,8 @@
 ## 載入與檢查
 
 ```powershell
-.\ezpub-0.3.5-windows-amd64.exe inspect-config C:\PortableApps\easypub\config.xml
-.\ezpub-0.3.5-windows-amd64.exe build novel.txt -o novel.epub -config C:\PortableApps\easypub\config.xml
+.\ezpub-0.3.8-windows-amd64.exe inspect-config C:\PortableApps\easypub\config.xml
+.\ezpub-0.3.8-windows-amd64.exe build novel.txt -o novel.epub -config C:\PortableApps\easypub\config.xml
 ```
 
 檢查指令顯示讀入的章節正則、空行、raw HTML 與 EPUB 相關設定。支援的 CLI 選項可覆寫對應建書設定；明確指定 `-o` 可避免輸出位置受舊設定影響。
@@ -25,7 +25,7 @@ GUI 尚未儲存字體選擇時，預選「使用閱讀器默認字體」，不�
 | `RecentOptions.fonttype=3` | 使用閱讀器字型，不嵌入 `font_embedded` |
 | `RecentOptions.font_subsetting=1` | 嘗試子集化內嵌字型，需 pyftsubset |
 
-GUI 一律顯示內嵌字型選擇，偵測到 pyftsubset 才顯示「僅嵌入子集」。工具依序尋找執行檔旁 `tools/pyftsubset.exe`、旁邊的 `pyftsubset.exe`，最後找 PATH；CLI 可用 `-subset-tool` 指定。
+GUI一律顯示內嵌字型選擇，偵測到pyftsubset才顯示「僅嵌入子集」。CLI指定 `-subset-tool` 後只使用該路徑，無效即失敗；未指定時才依序找執行檔旁、工作目錄下的release/tools等後備位置，最後找PATH；完整順序見[字型子集化](usage.md#插圖與字型)。
 
 內嵌字型可多選並以分號分隔儲存；第一個連結內建CSS的內文，第二個連結標題。欄位順序會保留，下次啟動可繼續使用。只有一個字型時，標題沿用內文。
 
@@ -38,6 +38,7 @@ GUI 一律顯示內嵌字型選擇，偵測到 pyftsubset 才顯示「僅嵌入�
 | `tagList.txt` | GUI 類別／標籤清單，一行一個 |
 | `custom.css` | 自動保存的定制 CSS |
 | `editor.txt` | TXT 編輯器路徑 |
+| `gui.json` | 已儲存的GUI選項，包含字型選擇與順序 |
 
 ## 支援的 EasyPub 欄位
 

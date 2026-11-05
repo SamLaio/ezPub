@@ -48,7 +48,7 @@ Common options:
   -rights text          rights statement
   -subset-fonts         subset embedded fonts with pyftsubset
   -chapter-regex expr   override chapter matching regex
-  -encoding name        auto, utf-8, gbk, gb18030, big5, cp950, utf-16le, utf-16be
+  -encoding name        auto, utf-8, gbk, gb18030, big5, cp950, big5hkscs, utf-16le, utf-16be
   -split-count n        split into n even chapters, matching EasyPub length split
   -vertical             append vertical writing CSS
 `
