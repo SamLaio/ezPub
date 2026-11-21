@@ -1,6 +1,6 @@
 package lang
 
-const Version = "0.3.8"
+const Version = "0.4.0"
 
 const (
 	AppName           = "ezpub"
@@ -14,7 +14,7 @@ const (
 
 const DefaultChapterRegex = `^[\s　]*[第卷][0123456789一二三四五六七八九十零〇百千两兩]*[章回部节節集卷篇話话].*|^[\s　]*Chapter\s*[0123456789]+.*|^[\s　]*[0123456789]+\s*[.．、]\s*\S.*`
 
-const Usage = `ezpub 0.3.8 - maintainable EasyPub-style ebook builder
+const Usage = `ezpub 0.4.0 - maintainable EasyPub-style ebook builder
 
 Usage:
   ezpub build input.txt -o output.epub [options]
@@ -69,6 +69,7 @@ const (
 	ErrInvalidChapterPlan  = "invalid chapter plan; expected start_line<TAB>level<TAB>title<TAB>skip_heading"
 	ErrNoXHTMLText         = "no XHTML text files found in epub"
 	ErrFontSubsetterNeeded = "font subsetting needs tools/pyftsubset.exe, pyftsubset.exe, PATH pyftsubset, or -subset-tool"
+	ErrDuplicateFontName   = "嵌入字型的檔名重複：%s；請先改為不同檔名，避免 CSS 與包內資源混用"
 	ErrFontSubsetFailed    = "font subsetting failed: %w\n%s"
 	MsgBuilt               = "built %s (%d chapters, text encoding %s)\n"
 	MsgChaptersWritten     = "wrote %s (%d chapter marks, text encoding %s)\n"

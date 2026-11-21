@@ -147,7 +147,7 @@ func TestReplacementCSSPreservesFontChoices(t *testing.T) {
 		if css != "" && !strings.Contains(bk.CSS, custom) {
 			t.Fatal("替換模式改寫自訂字型設定")
 		}
-		if css == "" && !strings.Contains(bk.CSS, `font-family: "ezpub-font-1", serif;`) {
+		if css == "" && !strings.Contains(bk.CSS, `font-family: "body.otf", serif;`) {
 			t.Fatal("空自訂CSS應沿用預設字型設定")
 		}
 		if !strings.Contains(bk.CSS, `../fonts/body.otf`) || !strings.Contains(bk.CSS, `../fonts/heading.ttf`) {
@@ -165,16 +165,49 @@ func TestDefaultFontsLinkBodyAndHeadings(t *testing.T) {
 		if len(fonts) == 0 && strings.Contains(bk.CSS, "ezpub-font-") {
 			t.Fatal("未選字型卻建立字型連結")
 		}
-		if len(fonts) > 0 && !strings.Contains(bk.CSS, `font-family: "ezpub-font-1", serif;`) {
+		if len(fonts) > 0 && !strings.Contains(bk.CSS, `font-family: "body.otf", serif;`) {
 			t.Fatal("第一字型未連到內文")
 		}
-		if len(fonts) == 2 && !strings.Contains(bk.CSS, `font-family: "ezpub-font-2", "ezpub-font-1", serif;`) {
+		if len(fonts) == 2 && !strings.Contains(bk.CSS, `font-family: "heading.ttf", "body.otf", serif;`) {
 			t.Fatal("第二字型未連到標題")
 		}
 	}
 	bk, err := FromText("內容", TextOptions{Fonts: []string{"body.otf", "heading.ttf"}, CSSMode: 1, CustomCSS: `h1 { font-family: "自訂標題"; }`})
-	if err != nil || strings.LastIndex(bk.CSS, `font-family: "自訂標題"`) < strings.LastIndex(bk.CSS, `font-family: "ezpub-font-2", "ezpub-font-1", serif;`) {
+	if err != nil || strings.LastIndex(bk.CSS, `font-family: "自訂標題"`) < strings.LastIndex(bk.CSS, `font-family: "heading.ttf", "body.otf", serif;`) {
 		t.Fatal("附加自訂CSS未優先於內建字型連結")
+	}
+}
+
+func TestEmbeddedFontFamilyUsesFilenameAndRejectsCollisions(t *testing.T) {
+	for _, mode := range []int{0, 1, 2} {
+		bk, err := FromText("內容", TextOptions{Fonts: []string{"內文.otf", "標題.ttf"}, CSSMode: mode, CustomCSS: `body { font-family: "內文.otf"; }`})
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, name := range []string{"內文.otf", "標題.ttf"} {
+			if !strings.Contains(bk.CSS, `font-family: "`+name+`"; src: url("../fonts/`+name+`")`) {
+				t.Fatalf("字型家族與檔名不一致：%s", name)
+			}
+		}
+		if strings.Contains(bk.CSS, "ezpub-font-") {
+			t.Fatal("仍產生順序別名")
+		}
+	}
+	if _, err := FromText("內容", TextOptions{Fonts: []string{"one/body.otf", "two/BODY.otf"}}); err == nil {
+		t.Fatal("不得以同名檔案打包兩種字型")
+	}
+}
+
+func TestLegacyFontReferencesFollowFilenameWithoutChangingText(t *testing.T) {
+	custom := `/* font-family:"ezpub-font-1" */ body{font-family:"ezpub-font-1",serif;} h2{FONT-FAMILY:ezpub-font-2,'ezpub-font-1';} h3{/* heading */ font-family:ezpub-font-2;} p:before{content:"font-family:ezpub-font-1";--sample:"ezpub-font-1";background:url(data:text/plain,{font-family:ezpub-font-1});}`
+	bk, err := FromText("內容", TextOptions{Fonts: []string{"body.otf", "heading.ttf"}, CSSMode: 2, CustomCSS: custom})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{`body{font-family:"body.otf",serif;}`, `h2{FONT-FAMILY:"heading.ttf","body.otf";}`, `h3{/* heading */ font-family:"heading.ttf";}`, `/* font-family:"ezpub-font-1" */`, `content:"font-family:ezpub-font-1"`, `--sample:"ezpub-font-1"`, `url(data:text/plain,{font-family:ezpub-font-1})`} {
+		if !strings.Contains(bk.CSS, want) {
+			t.Fatalf("遺失正確引用或誤改字串：%s", want)
+		}
 	}
 }
 

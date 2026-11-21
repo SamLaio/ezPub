@@ -164,6 +164,14 @@ func FromText(text string, opts TextOptions) (*Book, error) {
 	}
 
 	fonts := cleanPaths(opts.Fonts)
+	fontNames := make(map[string]bool)
+	for _, font := range fonts {
+		name := strings.ToLower(filepath.Base(font))
+		if fontNames[name] {
+			return nil, fmt.Errorf(lang.ErrDuplicateFontName, filepath.Base(font))
+		}
+		fontNames[name] = true
+	}
 	css := DefaultCSS(opts.Layout)
 	fontDefs, embeddedFamilies := fontCSS(fonts)
 	externalDefs, externalFamilies := externalFontCSS(opts.FontSources)
@@ -186,6 +194,7 @@ func FromText(text string, opts TextOptions) (*Book, error) {
 			css = opts.CustomCSS
 		}
 	}
+	css = rewriteLegacyFontFamilies(css, embeddedFamilies)
 	css += fontDefs
 	css += externalDefs
 
@@ -654,13 +663,38 @@ func fontCSS(fonts []string) (string, []string) {
 	var b strings.Builder
 	var families []string
 	b.WriteString("\n")
-	for i, fontPath := range fonts {
+	for _, fontPath := range fonts {
 		name := filepath.Base(fontPath)
-		family := fmt.Sprintf("ezpub-font-%d", i+1)
+		family := name
 		families = append(families, family)
 		b.WriteString(fmt.Sprintf("@font-face { font-family: %q; src: url(\"../fonts/%s\"); }\n", family, name))
 	}
 	return b.String(), families
+}
+
+func rewriteLegacyFontFamilies(css string, families []string) string {
+	if len(families) == 0 || !strings.Contains(css, "ezpub-font-") {
+		return css
+	}
+	const quoted = `"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'`
+	const comment = `/\*.*?\*/`
+	// 只改 font-family 宣告；註解、其他屬性字串及 URL 均保留。
+	parts := regexp.MustCompile(`(?is)` + comment + `|` + quoted + `|url\((?:` + quoted + `|[^)])*\)|(?:^|[;{}])(?:\s|` + comment + `)*font-family\s*:(?:` + comment + `|` + quoted + `|[^;{}"'])*`)
+	declaration := regexp.MustCompile(`(?is)^[;{}]?(?:\s|` + comment + `)*font-family\s*:`)
+	tokens := regexp.MustCompile(`(?s)` + comment + `|` + quoted + `|[\w-]+`)
+	return parts.ReplaceAllStringFunc(css, func(part string) string {
+		if !declaration.MatchString(part) {
+			return part
+		}
+		return tokens.ReplaceAllStringFunc(part, func(token string) string {
+			for i, family := range families {
+				if strings.Trim(token, `"'`) == fmt.Sprintf("ezpub-font-%d", i+1) {
+					return fmt.Sprintf("%q", family)
+				}
+			}
+			return token
+		})
+	})
 }
 
 func externalFontCSS(sources []string) (string, []string) {

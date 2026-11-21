@@ -51,7 +51,7 @@ func TestTwoEmbeddedFontsLinkDefaultCSS(t *testing.T) {
 		t.Fatal(err)
 	}
 	css := readZipEntry(t, path, "EPUB/styles/style.css")
-	for _, want := range []string{`font-family: "ezpub-font-1", serif;`, `font-family: "ezpub-font-2", "ezpub-font-1", serif;`, "../fonts/body.otf", "../fonts/heading.ttf"} {
+	for _, want := range []string{`font-family: "body.otf", serif;`, `font-family: "heading.ttf", "body.otf", serif;`, "../fonts/body.otf", "../fonts/heading.ttf"} {
 		if !strings.Contains(css, want) {
 			t.Fatalf("CSS缺少字型連結：%s", want)
 		}

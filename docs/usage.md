@@ -5,7 +5,7 @@
 以下範例在 PowerShell 執行，先將變數設為實際解壓位置：
 
 ```powershell
-$ezpub = "C:\path\to\ezpub-0.3.8-windows-amd64.exe"
+$ezpub = "C:\path\to\ezpub-0.4.0-windows-amd64.exe"
 & $ezpub version
 & $ezpub gui .\novel.txt
 ```
@@ -69,16 +69,16 @@ GB18030 解碼。
 
 ### 自訂CSS如何引用嵌入字型
 
-工具為選取字型依序附加 `ezpub-font-1`、`ezpub-font-2` 等 `@font-face` 別名。完整替換模式保留你自己的選擇器，不會自動替你補上內文與標題的字型設定。可在自訂CSS中使用這些別名：
+工具以選取字型的完整檔名（含副檔名）建立 `@font-face` 家族名稱，例如選取 `body.otf`、`heading.ttf`，便使用相同名稱，並分別引用 `../fonts/body.otf`、`../fonts/heading.ttf`。子集化亦保留檔名。不同目錄的字型若同名（不分大小寫），會停止建書並提示先改名，避免打包成重複資源。完整替換模式保留自己的選擇器，需指定實際字型：
 
 ```css
-body { font-family: "ezpub-font-1", serif; }
+body { font-family: "body.otf", serif; }
 h1, h2, h3, h4, h5, h6, .booktitle, .bookauthor, .titletoc, .title {
-  font-family: "ezpub-font-2", "ezpub-font-1", serif;
+  font-family: "heading.ttf", "body.otf", serif;
 }
 ```
 
-若改用字型自己的家族名稱，就需自行撰寫相符的 `@font-face`，例如在包內 `styles/style.css` 以 `../fonts/body.otf` 引用檔案。嵌入成功不等於CSS已套用，應核對字型別名／家族、相對路徑與正文實際使用的選擇器。ezPub沒有固定採用個人字型資料夾或CSS的全域預設。
+舊自訂CSS若在 `font-family` 宣告中引用 `ezpub-font-1`／`ezpub-font-2`，建書時會依所選字型順序同步改為完整檔名；註解、其他屬性的字串及URL不改。若使用字型自己的家族名稱，就需自行撰寫相符的 `@font-face`，例如在包內 `styles/style.css` 以 `../fonts/body.otf` 引用檔案。嵌入成功不等於CSS已套用，應核對字型家族、相對路徑與正文實際使用的選擇器。ezPub沒有固定採用個人字型資料夾或CSS的全域預設。
 
 ## 章節處理
 
